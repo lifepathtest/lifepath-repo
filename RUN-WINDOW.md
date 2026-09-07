@@ -44,7 +44,7 @@ During this 14-day window, the following are strictly frozen to preserve compari
 
 | Day | Date (UTC) | Page Views | Free Results | Free Comp % | Tier Clicks | Tier Click % | Paid Sales | Paid Conv % | Net Revenue |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| 1 | 2026-09-07 | 207 | - | - | - | - | 0 | - | $0.00 |
+| 1 | 2026-09-07 | 374 | - | - | - | - | 0 | - | $0.00 |
 | 2 | 2026-09-08 | | | | | | | | |
 | 3 | 2026-09-09 | | | | | | | | |
 | 4 | 2026-09-10 | | | | | | | | |
