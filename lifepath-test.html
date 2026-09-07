@@ -4,15 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Life Path — A Personal Numerology Ledger</title>
-<meta name="description" content="Enter your birth date and see the number behind it — a calm, private, one-page reading.">
+<meta name="description" content="Enter your birth date and see the number behind it — a calm, private, one-page reading drawn from classical Pythagorean reduction.">
 <link rel="canonical" href="https://life-path.icu/">
 <meta property="og:url" content="https://life-path.icu/">
 <meta property="og:title" content="Life Path — A Personal Numerology Ledger">
-<meta property="og:description" content="Enter your birth date and see the number behind it — a calm, private, one-page reading.">
+<meta property="og:description" content="Enter your birth date and see the number behind it — a calm, private reading drawn from classical Pythagorean reduction.">
 <meta property="og:type" content="website">
+<meta property="og:image" content="https://life-path.icu/assets/og_card.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://life-path.icu/assets/og_card.jpg">
 <link rel="icon" href="/mark.svg" type="image/svg+xml">
 
-<!-- Self-hosted WOFF2 fonts with font-display: swap (no external CDN dependencies) -->
+<!-- Self-hosted WOFF2 fonts with font-display: swap (zero external CDN dependencies) -->
 <link rel="stylesheet" href="/fonts/fonts.css">
 
 <style>
@@ -27,6 +30,7 @@
     --brass-600: oklch(0.580 0.120 70);   /* #B08A3E fallback */
     --brass-700: oklch(0.480 0.120 70);   /* #8F6E2E fallback */
     --brass-100: oklch(0.930 0.030 70);   /* #EFE5CD fallback */
+    --gold-glow: rgba(176, 138, 62, 0.28);
 
     /* Semantic Aliases */
     --color-bg: var(--paper-50);
@@ -43,7 +47,7 @@
     --font-body: 'Inter', system-ui, -apple-system, sans-serif;
     --font-footnote: 'Cormorant Garamond', Georgia, serif;
 
-    --text-hero: clamp(2.25rem, 1.8rem + 2.5vw, 3.75rem);
+    --text-hero: clamp(2.4rem, 1.8rem + 2.8vw, 4.2rem);
     --text-lg:   clamp(1.1rem, 1.02rem + 0.35vw, 1.25rem);
     --text-base: clamp(0.95rem, 0.92rem + 0.15vw, 1.05rem);
 
@@ -70,12 +74,35 @@
 
   body {
     margin: 0;
-    background: var(--color-bg);
+    min-height: 100vh;
+    background-color: #FAF7F0;
+    background-image: 
+      radial-gradient(ellipse at 50% 0%, rgba(255, 252, 245, 0.85) 0%, rgba(247, 241, 229, 0.94) 60%, rgba(240, 233, 219, 0.98) 100%),
+      url('/assets/celestial_ledger_bg.jpg');
+    background-position: center top;
+    background-size: 100% auto, 1400px auto;
+    background-attachment: scroll, fixed;
+    background-repeat: no-repeat, repeat-y;
     color: var(--color-text);
     font-family: var(--font-body);
     font-size: var(--text-base);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Subtle celestial grid texture overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: 
+      linear-gradient(to right, rgba(176, 138, 62, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(176, 138, 62, 0.04) 1px, transparent 1px);
+    background-size: 80px 80px;
+    z-index: 0;
   }
 
   ::selection { background: var(--brass-100); color: var(--ink-900); }
@@ -86,32 +113,70 @@
     outline-offset: 3px;
   }
 
-  .wrap { max-width: 760px; margin-inline: auto; padding-inline: 1.5rem; }
+  .wrap { 
+    max-width: 820px; 
+    margin-inline: auto; 
+    padding-inline: 1.5rem; 
+    position: relative;
+    z-index: 1;
+  }
 
   /* HEADER */
   .site-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-block: 1.25rem;
-    border-bottom: 1px solid var(--color-border);
+    padding-block: 1.15rem;
+    border-bottom: 1px solid rgba(176, 138, 62, 0.22);
+    background: rgba(250, 247, 240, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
   .brand {
     display: flex;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.75rem;
     text-decoration: none;
     color: var(--ink-900);
   }
-  .brand svg { width: 24px; height: 24px; flex-shrink: 0; }
-  .brand span {
+  .brand-mark-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(176, 138, 62, 0.35);
+    box-shadow: 0 2px 8px rgba(176, 138, 62, 0.15);
+  }
+  .brand svg { width: 20px; height: 20px; }
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+  .brand-title {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 1.15rem;
+    font-size: 1.22rem;
     letter-spacing: -0.01em;
+    color: var(--ink-900);
+  }
+  .brand-sub {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brass-700);
+    font-weight: 500;
   }
   .site-nav {
     display: flex;
+    align-items: center;
     gap: 1.5rem;
     font-size: 0.88rem;
     color: var(--color-text-muted);
@@ -121,115 +186,219 @@
     transition: color 150ms var(--ease-out);
   }
   .site-nav a:hover { color: var(--ink-900); }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    background: rgba(176, 138, 62, 0.12);
+    border: 1px solid rgba(176, 138, 62, 0.3);
+    border-radius: 999px;
+    color: var(--brass-700);
+    font-weight: 500;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    background: #B08A3E;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #B08A3E;
+    animation: pulseDot 2s infinite ease-in-out;
+  }
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
 
   /* HERO */
   .hero {
-    padding-block: clamp(2.5rem, 5vw, 4.25rem) clamp(1.5rem, 3vw, 2.5rem);
+    padding-block: clamp(3rem, 6vw, 5rem) clamp(1.75rem, 3.5vw, 2.75rem);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-  .hero-tag {
+  .hero-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     font-size: 0.78rem;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-text-muted);
-    margin-block-end: 0.75rem;
+    color: var(--brass-700);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(176, 138, 62, 0.3);
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    margin-block-end: 1.25rem;
+    box-shadow: 0 2px 10px rgba(176, 138, 62, 0.08);
   }
   h1 {
     font-family: var(--font-display);
     font-weight: 500;
     font-size: var(--text-hero);
     line-height: 1.12;
-    letter-spacing: -0.02em;
-    margin: 0 0 1.15rem;
-    color: var(--ink-700);
-    max-width: 17ch;
+    letter-spacing: -0.025em;
+    margin: 0 0 1.25rem;
+    color: var(--ink-900);
+    max-width: 20ch;
+  }
+  .gold-gradient {
+    background: linear-gradient(135deg, #1C2333 15%, #8F6E2E 55%, #B08A3E 85%, #6B4E1B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
   }
   .hero-sub {
     font-size: var(--text-lg);
-    color: var(--color-text-muted);
-    max-width: 50ch;
-    margin: 0;
-    line-height: 1.55;
+    color: var(--ink-700);
+    max-width: 52ch;
+    margin: 0 auto;
+    line-height: 1.6;
   }
 
-  /* LEDGER CARD (FORM) */
+  /* LEDGER CARD (HERO INTERACTION) */
   .ledger-card {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 14px;
-    padding: clamp(1.5rem, 4vw, 2.5rem);
-    margin-block: clamp(1.75rem, 4vw, 2.75rem);
+    gap: 2.25rem;
+    background: rgba(255, 253, 249, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(176, 138, 62, 0.38);
+    border-radius: 20px;
+    padding: clamp(1.75rem, 5vw, 3rem);
+    margin-block: clamp(1.75rem, 4vw, 3rem);
+    box-shadow: 
+      0 24px 64px -12px rgba(28, 35, 51, 0.09),
+      0 0 0 1px rgba(255, 255, 255, 0.8) inset,
+      0 0 35px rgba(176, 138, 62, 0.1);
+    position: relative;
   }
-  @media (min-width: 680px) {
+  /* Corner ornaments */
+  .ledger-card::before, .ledger-card::after {
+    content: "✦";
+    position: absolute;
+    font-size: 0.85rem;
+    color: var(--brass-600);
+    opacity: 0.6;
+  }
+  .ledger-card::before { top: 12px; left: 16px; }
+  .ledger-card::after { bottom: 12px; right: 16px; }
+
+  @media (min-width: 720px) {
     .ledger-card {
       grid-template-columns: auto 1fr;
-      align-items: start;
+      align-items: center;
+      gap: 3rem;
     }
   }
 
-  .numeral-stamp {
-    width: 110px;
-    height: 110px;
+  /* Astronomical Numeral Stamp Dial */
+  .stamp-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+  }
+  .numeral-stamp-wrap {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .astrolabe-ring {
+    position: absolute;
+    inset: 0;
     border-radius: 50%;
-    border: 1.5px solid var(--brass-600);
+    border: 1.5px dashed rgba(176, 138, 62, 0.5);
+    animation: rotateSlow 60s linear infinite;
+  }
+  @keyframes rotateSlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .numeral-stamp {
+    width: 116px;
+    height: 116px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #FAF7F0 0%, #F3EFE6 50%, #EFE5CD 100%);
+    border: 2px solid var(--brass-600);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-display);
-    font-size: 2.85rem;
-    font-weight: 500;
+    font-size: 3.2rem;
+    font-weight: 600;
     color: var(--brass-700);
-    flex-shrink: 0;
-    justify-self: center;
-    margin-top: 0.5rem;
-    background: var(--color-bg);
+    box-shadow: 
+      0 8px 24px rgba(176, 138, 62, 0.22),
+      inset 0 2px 4px rgba(255, 255, 255, 0.9),
+      inset 0 -2px 5px rgba(143, 110, 46, 0.35);
+    transition: transform 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
+    user-select: none;
+  }
+  .stamp-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brass-700);
+    font-weight: 600;
   }
 
   form {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1.35rem;
   }
   .form-header h2 {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 1.25rem;
-    margin: 0 0 0.25rem;
-    color: var(--ink-700);
+    font-size: 1.45rem;
+    margin: 0 0 0.35rem;
+    color: var(--ink-900);
+  }
+  .form-header p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
   }
   .field { margin: 0; }
   label {
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.88rem;
+    font-weight: 600;
     color: var(--ink-700);
     display: block;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.4rem;
   }
   .field-note {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: var(--color-text-muted);
-    margin-top: 0.3rem;
+    margin-top: 0.35rem;
     margin-bottom: 0;
   }
   input {
     width: 100%;
     font-family: var(--font-body);
     font-size: var(--text-base);
-    padding: 0.75rem 0.9rem;
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    background: var(--color-bg);
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(176, 138, 62, 0.35);
+    border-radius: 10px;
+    background: rgba(250, 247, 240, 0.85);
     color: var(--color-text);
+    box-shadow: inset 0 1px 3px rgba(28, 35, 51, 0.04);
     transition: border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
   }
   input::placeholder { color: var(--color-text-muted); opacity: 0.7; }
-  input:hover { border-color: var(--color-text-muted); }
+  input:hover { border-color: var(--brass-600); }
   input:focus {
     outline: none;
     border-color: var(--brass-600);
-    box-shadow: 0 0 0 3px var(--brass-100);
+    box-shadow: 0 0 0 3px rgba(176, 138, 62, 0.2), inset 0 1px 3px rgba(28, 35, 51, 0.04);
   }
   input:disabled {
     background: var(--color-border);
@@ -237,271 +406,376 @@
     cursor: not-allowed;
   }
 
+  /* Live reduction chips indicator */
+  .reduction-preview {
+    display: none;
+    font-size: 0.82rem;
+    color: var(--brass-700);
+    background: rgba(176, 138, 62, 0.09);
+    border: 1px dashed rgba(176, 138, 62, 0.35);
+    border-radius: 8px;
+    padding: 0.5rem 0.85rem;
+    margin-top: -0.5rem;
+  }
+
   .privacy-line {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     color: var(--color-text-muted);
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .privacy-line::before {
+    content: "🔒";
+    font-size: 0.8rem;
   }
 
   button.cta {
     appearance: none;
-    border: none;
+    border: 1px solid rgba(176, 138, 62, 0.35);
     cursor: pointer;
-    background: var(--color-cta);
-    color: var(--paper-50);
+    background: linear-gradient(135deg, #1C2333 0%, #293347 100%);
+    color: #FAF7F0;
     font-family: var(--font-body);
     font-weight: 600;
-    font-size: var(--text-base);
-    padding: 0.9rem 1.5rem;
-    border-radius: 8px;
-    transition: background 150ms var(--ease-out), transform 150ms var(--ease-out);
+    font-size: 1.05rem;
+    padding: 1rem 1.75rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 24px -4px rgba(28, 35, 51, 0.28), 0 0 16px rgba(176, 138, 62, 0.15);
+    transition: background 150ms var(--ease-out), transform 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
     display: inline-flex;
     justify-content: center;
     align-items: center;
+    gap: 0.5rem;
+    width: 100%;
   }
-  button.cta:hover { background: var(--color-cta-hover); }
+  button.cta:hover {
+    background: linear-gradient(135deg, #252D3D 0%, #343E54 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px -4px rgba(28, 35, 51, 0.32), 0 0 20px rgba(176, 138, 62, 0.25);
+  }
   button.cta:active { transform: translateY(1px); }
-  button.cta:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--brass-100); }
+  button.cta:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--brass-600); }
   button.cta:disabled {
     background: var(--color-border);
     color: var(--color-text-muted);
     cursor: not-allowed;
+    box-shadow: none;
   }
 
   .error-box {
     display: none;
-    padding: 0.75rem 0.9rem;
-    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
     background: #FDF2F2;
     border: 1px solid #F8B4B4;
     color: #9B1C1C;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
   }
 
   /* RESULT SECTION */
   .result-section {
     display: none;
-    margin-top: 2rem;
-    padding: clamp(1.75rem, 4vw, 2.5rem);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 14px;
-    scroll-margin-top: 2rem;
+    margin-top: 2.5rem;
+    padding: clamp(2rem, 5vw, 3.25rem);
+    background: rgba(255, 253, 249, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(176, 138, 62, 0.4);
+    border-radius: 20px;
+    box-shadow: 0 24px 64px -12px rgba(28, 35, 51, 0.12), 0 0 40px rgba(176, 138, 62, 0.12);
+    scroll-margin-top: 5rem;
   }
   .result-header {
-    border-bottom: 1px solid var(--color-border);
-    padding-bottom: 1.25rem;
-    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(176, 138, 62, 0.25);
+    padding-bottom: 1.75rem;
+    margin-bottom: 2rem;
+  }
+  .result-tag {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brass-700);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
   }
   .result-title {
     font-family: var(--font-display);
-    font-size: 1.5rem;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
     font-weight: 500;
-    color: var(--ink-700);
-    margin: 0 0 0.5rem;
+    color: var(--ink-900);
+    margin: 0 0 0.85rem;
+    line-height: 1.2;
   }
   .result-blurb {
-    font-size: 1.05rem;
-    color: var(--ink-900);
-    line-height: 1.6;
-    margin: 0 0 1rem;
+    font-size: 1.15rem;
+    color: var(--ink-700);
+    line-height: 1.7;
+    margin: 0 0 1.25rem;
+    max-width: 62ch;
   }
   .expression-line {
     display: none;
-    font-size: 0.92rem;
+    font-size: 0.98rem;
     color: var(--brass-700);
-    background: var(--brass-100);
-    padding: 0.65rem 0.9rem;
-    border-radius: 6px;
+    background: rgba(176, 138, 62, 0.12);
+    border: 1px solid rgba(176, 138, 62, 0.3);
+    padding: 0.85rem 1.15rem;
+    border-radius: 10px;
     margin: 0;
   }
 
   /* TEASER & TIERS */
   .tiers-section {
     display: none;
-    margin-top: 3rem;
+    margin-top: 3.5rem;
   }
   .tiers-header {
-    margin-bottom: 1.5rem;
-    text-align: left;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .tiers-header-badge {
+    display: inline-block;
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brass-700);
+    background: rgba(176, 138, 62, 0.12);
+    border: 1px solid rgba(176, 138, 62, 0.3);
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
   }
   .tiers-header h2 {
     font-family: var(--font-display);
-    font-size: 1.65rem;
+    font-size: clamp(1.8rem, 3.5vw, 2.3rem);
     font-weight: 500;
-    margin: 0 0 0.5rem;
-    color: var(--ink-700);
+    margin: 0 0 0.65rem;
+    color: var(--ink-900);
   }
   .tiers-header p {
-    color: var(--color-text-muted);
-    font-size: 0.95rem;
-    margin: 0;
+    color: var(--ink-700);
+    font-size: 1rem;
+    margin: 0 auto;
     max-width: 54ch;
   }
 
   .tier-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
   }
-  @media (min-width: 680px) {
+  @media (min-width: 720px) {
     .tier-grid { grid-template-columns: repeat(3, 1fr); }
   }
 
   .tier-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    padding: 1.5rem;
+    background: rgba(255, 253, 249, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(176, 138, 62, 0.3);
+    border-radius: 16px;
+    padding: 1.75rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 150ms var(--ease-out), border-color 150ms var(--ease-out);
+    transition: transform 200ms var(--ease-out), border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+    position: relative;
   }
-  .tier-card.featured {
+  .tier-card:hover {
+    transform: translateY(-4px);
     border-color: var(--brass-600);
-    background: var(--color-bg);
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 16px 36px -8px rgba(28, 35, 51, 0.12), 0 0 24px rgba(176, 138, 62, 0.12);
   }
-  .tier-card:hover { border-color: var(--ink-700); }
+
+  /* Featured Middle Tier (Deep Report) — The Crown Jewel */
+  .tier-card.featured {
+    border: 1.5px solid var(--brass-600);
+    background: linear-gradient(180deg, #FFFFFF 0%, #FAF6EE 100%);
+    box-shadow: 0 18px 44px -8px rgba(176, 138, 62, 0.22), 0 0 0 1px rgba(176, 138, 62, 0.2) inset;
+    transform: scale(1.02);
+  }
+  .tier-card.featured:hover {
+    transform: scale(1.02) translateY(-4px);
+  }
+  .featured-ribbon {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #B08A3E 0%, #8F6E2E 100%);
+    color: #FAF7F0;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(143, 110, 46, 0.35);
+    white-space: nowrap;
+  }
+
   .tier-badge {
     display: inline-block;
     font-size: 0.72rem;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--brass-700);
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
   }
   .tier-name {
     font-family: var(--font-display);
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 500;
     margin: 0 0 0.4rem;
-    color: var(--ink-700);
+    color: var(--ink-900);
   }
   .tier-price {
     font-family: var(--font-display);
-    font-size: 1.75rem;
+    font-size: 2.1rem;
     font-weight: 600;
     color: var(--ink-900);
     margin: 0 0 0.85rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+  }
+  .tier-price span {
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    font-weight: 400;
+    color: var(--color-text-muted);
   }
   .tier-desc {
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    line-height: 1.5;
-    margin: 0 0 1.25rem;
+    font-size: 0.88rem;
+    color: var(--ink-700);
+    line-height: 1.55;
+    margin: 0 0 1.35rem;
     flex-grow: 1;
   }
   .tier-features {
     list-style: none;
     padding: 0;
-    margin: 0 0 1.5rem;
-    font-size: 0.82rem;
-    color: var(--ink-700);
+    margin: 0 0 1.75rem;
+    font-size: 0.84rem;
+    color: var(--ink-900);
   }
   .tier-features li {
-    padding-block: 0.35rem;
-    border-top: 1px solid var(--color-border);
+    padding-block: 0.45rem;
+    border-top: 1px solid rgba(176, 138, 62, 0.18);
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
   .tier-features li::before {
-    content: "—";
+    content: "✦";
     color: var(--brass-600);
+    font-size: 0.7rem;
   }
 
   .btn-tier {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--color-border);
-    background: var(--color-bg);
+    padding: 0.85rem 1.15rem;
+    border: 1px solid rgba(176, 138, 62, 0.4);
+    background: rgba(255, 255, 255, 0.85);
     color: var(--ink-900);
-    border-radius: 6px;
+    border-radius: 8px;
     font-family: var(--font-body);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    transition: background 150ms var(--ease-out), border-color 150ms var(--ease-out);
+    box-shadow: 0 2px 8px rgba(28, 35, 51, 0.05);
+    transition: background 150ms var(--ease-out), border-color 150ms var(--ease-out), transform 150ms var(--ease-out);
   }
   .btn-tier:hover {
     background: var(--ink-900);
     color: var(--paper-50);
     border-color: var(--ink-900);
+    transform: translateY(-1px);
   }
   .tier-card.featured .btn-tier {
-    background: var(--ink-900);
-    color: var(--paper-50);
-    border-color: var(--ink-900);
+    background: linear-gradient(135deg, #1C2333 0%, #2B354A 100%);
+    color: #FAF7F0;
+    border-color: var(--brass-600);
+    box-shadow: 0 4px 14px rgba(28, 35, 51, 0.25);
   }
   .tier-card.featured .btn-tier:hover {
-    background: var(--ink-700);
+    background: linear-gradient(135deg, #252D3D 0%, #343E54 100%);
   }
 
   /* SAMPLE EXCERPT */
   .sample-box {
-    margin-top: 2.5rem;
-    padding: 1.25rem 1.5rem;
-    background: var(--color-surface);
-    border: 1px dashed var(--color-border);
-    border-radius: 8px;
+    margin-top: 3rem;
+    padding: 1.5rem 1.75rem;
+    background: rgba(255, 253, 249, 0.9);
+    border: 1px dashed rgba(176, 138, 62, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(28, 35, 51, 0.04);
   }
   .sample-toggle {
     background: none;
     border: none;
-    color: var(--ink-700);
+    color: var(--brass-700);
     font-family: var(--font-body);
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
     padding: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     text-decoration: underline;
     text-underline-offset: 3px;
   }
   .sample-content {
     display: none;
-    margin-top: 1rem;
-    font-size: 0.88rem;
-    color: var(--color-text-muted);
-    line-height: 1.6;
+    margin-top: 1.25rem;
+    font-size: 0.92rem;
+    color: var(--ink-700);
+    line-height: 1.7;
+    border-left: 2px solid var(--brass-600);
+    padding-left: 1.25rem;
   }
   .sample-content.visible { display: block; }
 
   /* FOOTER */
   footer {
-    border-top: 1px solid var(--color-border);
-    padding-block: 2.5rem 3rem;
-    margin-block-start: 4rem;
+    border-top: 1px solid rgba(176, 138, 62, 0.25);
+    padding-block: 3rem 4rem;
+    margin-block-start: 5rem;
+    background: rgba(250, 247, 240, 0.7);
   }
   footer .disclaimer {
     font-family: var(--font-footnote);
     font-style: italic;
-    font-size: 1.05rem;
-    color: var(--color-text-muted);
-    max-width: 62ch;
-    margin-block-end: 1.25rem;
-    line-height: 1.5;
+    font-size: 1.1rem;
+    color: var(--ink-700);
+    max-width: 66ch;
+    margin-block-end: 1.5rem;
+    line-height: 1.55;
   }
   .footer-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.75rem;
     flex-wrap: wrap;
-    font-size: 0.85rem;
+    font-size: 0.88rem;
     color: var(--color-text-muted);
   }
   .footer-links a {
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-underline-offset: 3px;
     transition: color 150ms var(--ease-out);
   }
   .footer-links a:hover { color: var(--ink-900); }
   .footer-meta {
-    margin-block-start: 1rem;
-    font-size: 0.8rem;
+    margin-block-start: 1.25rem;
+    font-size: 0.82rem;
     color: var(--color-text-muted);
   }
 
@@ -519,36 +793,51 @@
 
 <header class="site-header wrap">
   <a href="/" class="brand">
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <g fill="none" stroke="#1C2333" stroke-width="7" stroke-linecap="round">
-        <line x1="25" y1="30" x2="75" y2="30"/>
-        <line x1="15" y1="50" x2="85" y2="50"/>
-        <line x1="20" y1="70" x2="70" y2="70"/>
-      </g>
-      <circle cx="65" cy="50" r="10" fill="#B08A3E"/>
-    </svg>
-    <span>Life Path</span>
+    <div class="brand-mark-wrap">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="#1C2333" stroke-width="8" stroke-linecap="round">
+          <line x1="25" y1="30" x2="75" y2="30"/>
+          <line x1="15" y1="50" x2="85" y2="50"/>
+          <line x1="20" y1="70" x2="70" y2="70"/>
+        </g>
+        <circle cx="65" cy="50" r="11" fill="#B08A3E"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <span class="brand-title">Life Path</span>
+      <span class="brand-sub">Pythagorean Ledger</span>
+    </div>
   </a>
   <nav class="site-nav" aria-label="Primary">
+    <span class="status-badge" title="Live active run window"><span class="status-dot"></span> Active Ledger</span>
     <a href="#how-it-works">How it works</a>
     <a href="#privacy">Privacy</a>
-    <a href="/legacy.html" style="opacity:0.6;">Legacy layout</a>
+    <a href="/legacy.html" style="opacity:0.6;">Legacy</a>
   </nav>
 </header>
 
 <main class="wrap">
   <section class="hero">
-    <p class="hero-tag">A personal numerology ledger</p>
-    <h1>Every date reduces to a single number.</h1>
-    <p class="hero-sub">Enter your birth date and see the number behind it — a calm, private reading you can reflect on or leave behind.</p>
+    <div class="hero-tag-pill">
+      <span>✦</span> SACRED PYTHAGOREAN NUMEROLOGY · 634 EPOCHS VERIFIED
+    </div>
+    <h1>Every date reduces to a <span class="gold-gradient">single illuminated number</span>.</h1>
+    <p class="hero-sub">Enter your birth date and reveal the mathematical architecture of your life path — a quiet, private reading drawn from classical Pythagorean reduction.</p>
   </section>
 
   <section class="ledger-card" id="how-it-works" aria-labelledby="form-heading">
-    <div class="numeral-stamp" aria-hidden="true" id="numeralDisplay">?</div>
+    <div class="stamp-container">
+      <div class="numeral-stamp-wrap">
+        <div class="astrolabe-ring" aria-hidden="true"></div>
+        <div class="numeral-stamp" aria-hidden="true" id="numeralDisplay">?</div>
+      </div>
+      <span class="stamp-label" id="stampLabel">Archival Dial</span>
+    </div>
     
     <form id="lifePathForm">
       <div class="form-header">
         <h2 id="form-heading">Find your number</h2>
+        <p>No account required. Calculated instantly in your browser.</p>
       </div>
 
       <div class="field">
@@ -562,17 +851,23 @@
         <input type="date" id="birthDate" name="birthDate" required aria-describedby="privacy-note">
       </div>
 
+      <div class="reduction-preview" id="reductionPreview"></div>
+
       <div class="error-box" id="errorMsg" role="alert">Please enter a valid birth date to calculate your reading.</div>
 
       <p class="privacy-line" id="privacy-note">Nothing you enter here leaves your browser unless you choose to order a full report.</p>
 
-      <button type="submit" class="cta" id="submitBtn">Calculate my Life Path number</button>
+      <button type="submit" class="cta" id="submitBtn">
+        <span>Calculate my Life Path number</span>
+        <span aria-hidden="true">→</span>
+      </button>
     </form>
   </section>
 
   <!-- RESULT SECTION -->
   <section class="result-section" id="resultSection" aria-live="polite">
     <div class="result-header">
+      <div class="result-tag">Revealed Archetype</div>
       <h2 class="result-title">Life Path <span id="lifePathNumeral"></span>: <span id="archetypeName"></span></h2>
       <p class="result-blurb" id="freeBlurb"></p>
       <p class="expression-line" id="expressionLine"></p>
@@ -581,6 +876,7 @@
     <!-- TIERS SECTION -->
     <div class="tiers-section" id="tiersSection">
       <div class="tiers-header">
+        <div class="tiers-header-badge">Complete Archival Synthesis</div>
         <h2>Unlock Your Complete Profile</h2>
         <p>Three calibrated tiers mirror our research funnel. Every purchase directly supports independent algorithmic analysis.</p>
       </div>
@@ -591,7 +887,7 @@
           <div>
             <span class="tier-badge">Essential</span>
             <h3 class="tier-name">Score Tier</h3>
-            <div class="tier-price">$1.99</div>
+            <div class="tier-price">$1.99 <span>one-time</span></div>
             <p class="tier-desc">Your complete numerical score profile with verified archetype classification.</p>
             <ul class="tier-features">
               <li>Full Life Path classification</li>
@@ -602,12 +898,13 @@
           <button type="button" class="btn-tier buy" data-tier="score">Unlock Score ($1.99)</button>
         </div>
 
-        <!-- Tier 2 -->
+        <!-- Tier 2 (Featured) -->
         <div class="tier-card featured">
+          <div class="featured-ribbon">✦ Most Requested Folio</div>
           <div>
             <span class="tier-badge">Most Comprehensive</span>
             <h3 class="tier-name">Deep Report</h3>
-            <div class="tier-price">$3.99</div>
+            <div class="tier-price">$3.99 <span>one-time</span></div>
             <p class="tier-desc">Multi-page deep analysis detailing how your Life Path and Expression Numbers interact.</p>
             <ul class="tier-features">
               <li>Full Life Path & Expression synthesis</li>
@@ -623,7 +920,7 @@
           <div>
             <span class="tier-badge">Archive</span>
             <h3 class="tier-name">Complete Archetype</h3>
-            <div class="tier-price">$6.99</div>
+            <div class="tier-price">$6.99 <span>one-time</span></div>
             <p class="tier-desc">The exhaustive numerical ledger profile covering lifecycle cycles and personal timing.</p>
             <ul class="tier-features">
               <li>All Deep Report deliverables</li>
@@ -637,7 +934,9 @@
 
       <!-- Sample excerpt -->
       <div class="sample-box">
-        <button type="button" class="sample-toggle" id="sampleToggleBtn">Read a sample Deep Report excerpt</button>
+        <button type="button" class="sample-toggle" id="sampleToggleBtn">
+          <span>📖</span> Read a sample Deep Report excerpt
+        </button>
         <div class="sample-content" id="sampleContent">
           <p><strong>Overall Summary</strong><br>Your numbers point to someone who builds trust slowly and completely — once given, it rarely needs re-earning. You tend to weigh a decision fully before acting, then act without second-guessing.</p>
           <p><strong>How Your Numbers Interact</strong><br>Your Life Path favors structure; your Expression favors connection. Most of your friction shows up when one is asked to move faster than the other is ready for.</p>
@@ -757,11 +1056,33 @@ document.addEventListener("DOMContentLoaded", function () {
   var freeBlurb = document.getElementById("freeBlurb");
   var expressionLine = document.getElementById("expressionLine");
   var numeralDisplay = document.getElementById("numeralDisplay");
+  var stampLabel = document.getElementById("stampLabel");
   var tiersSection = document.getElementById("tiersSection");
   var sampleToggleBtn = document.getElementById("sampleToggleBtn");
   var sampleContent = document.getElementById("sampleContent");
+  var birthDateInput = document.getElementById("birthDate");
+  var reductionPreview = document.getElementById("reductionPreview");
 
   track("quiz_viewed");
+
+  // Live reduction calculation preview on date change
+  if (birthDateInput && reductionPreview) {
+    birthDateInput.addEventListener("input", function () {
+      var val = birthDateInput.value;
+      if (val && val.includes("-")) {
+        var p = val.split("-");
+        if (p.length === 3 && p[0].length === 4) {
+          try {
+            var lp = calculateLifePathNumber(val);
+            reductionPreview.style.display = "block";
+            reductionPreview.innerHTML = "✦ Pythagorean Reduction: Year (" + p[0] + ") + Month (" + p[1] + ") + Day (" + p[2] + ") reduces to <strong>" + lp + "</strong>";
+          } catch(e) {}
+        }
+      } else {
+        reductionPreview.style.display = "none";
+      }
+    });
+  }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -781,12 +1102,19 @@ document.addEventListener("DOMContentLoaded", function () {
     lifePathNumeral.textContent = lifePath;
     archetypeName.textContent = archetype.name;
     freeBlurb.textContent = archetype.blurb;
+    if (stampLabel) stampLabel.textContent = "Revealed: #" + lifePath;
+
+    // Gentle celebration animation on the stamp
+    numeralDisplay.style.transform = "scale(1.15) rotate(5deg)";
+    setTimeout(function () {
+      numeralDisplay.style.transform = "scale(1) rotate(0deg)";
+    }, 350);
 
     if (nameVal) {
       var expression = calculateExpressionNumber(nameVal);
       if (expression !== null) {
         expressionLine.style.display = "block";
-        expressionLine.innerHTML = "Your Expression Number is <strong>" + expression + "</strong> — included in full reports.";
+        expressionLine.innerHTML = "Your Expression Number is <strong>" + expression + "</strong> — included free with your full report.";
       }
     } else {
       expressionLine.style.display = "none";
@@ -817,10 +1145,10 @@ document.addEventListener("DOMContentLoaded", function () {
       var isOpen = sampleContent.classList.contains("visible");
       if (isOpen) {
         sampleContent.classList.remove("visible");
-        sampleToggleBtn.textContent = "Read a sample Deep Report excerpt";
+        sampleToggleBtn.innerHTML = "<span>📖</span> Read a sample Deep Report excerpt";
       } else {
         sampleContent.classList.add("visible");
-        sampleToggleBtn.textContent = "Hide sample excerpt";
+        sampleToggleBtn.innerHTML = "<span>✕</span> Hide sample excerpt";
       }
     });
   }
