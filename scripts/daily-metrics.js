@@ -2,6 +2,23 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
+// Fallback load from LIFE-PATH-env.md if not in process.env
+const envFilePath = 'C:\\Users\\sinyo\\Desktop\\ENV\\LIFE-PATH-env.md';
+if (fs.existsSync(envFilePath)) {
+  const envContent = fs.readFileSync(envFilePath, 'utf8');
+  for (const rawLine of envContent.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    const match = line.match(/^([A-Za-z0-9_]+)=(.*)$/);
+    if (match) {
+      const key = match[1].trim();
+      const val = match[2].trim();
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
 const CLOUDFLARE_TOKEN = process.env.CLOUDFLARE_AGENT_TOKEN;
 const STRIPE_KEY = process.env.STRIPE_LIVE_KEY;
 const ZONE_ID = "5419db263eec756845ebf57019a4c412";
@@ -92,6 +109,9 @@ async function getCloudflareAnalytics() {
   };
 
   const res = await httpsRequest(options, query);
+  if (res.errors && res.errors.length) {
+    console.error("Cloudflare GraphQL Error:", JSON.stringify(res.errors));
+  }
   try {
     return res.data.viewer.zones[0].httpRequests1dGroups || [];
   } catch (e) {
