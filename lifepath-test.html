@@ -406,6 +406,7 @@ const ARCHETYPES = {
    can attach GA4 / Plausible / PostHog / whatever you're already running
    without me guessing at a vendor integration I can't verify from here. */
 function track(eventName, detail) {
+  console.log("lifepath:" + eventName, detail || {});
   window.dispatchEvent(new CustomEvent("lifepath:" + eventName, { detail: detail || {} }));
 }
 
