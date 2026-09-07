@@ -32,6 +32,10 @@
 
 <link rel="icon" href="/mark.svg" type="image/svg+xml">
 
+<!-- Preload critical display and body fonts to eliminate #how-it-works layout shift (CLS) -->
+<link rel="preload" href="/fonts/fraunces-600-normal-14.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/inter-400-normal-21.woff2" as="font" type="font/woff2" crossorigin>
+
 <!-- Self-hosted WOFF2 fonts with font-display: swap (zero external CDN dependencies) -->
 <link rel="stylesheet" href="/fonts/fonts.css">
 
@@ -272,12 +276,10 @@
     min-height: 100vh;
     background-color: #FAF7F0;
     background-image: 
-      radial-gradient(ellipse at 50% 0%, rgba(255, 252, 245, 0.85) 0%, rgba(247, 241, 229, 0.94) 60%, rgba(240, 233, 219, 0.98) 100%),
-      url('/assets/celestial_ledger_bg.jpg');
+      radial-gradient(ellipse at 50% 0%, rgba(255, 252, 245, 0.85) 0%, rgba(247, 241, 229, 0.94) 60%, rgba(240, 233, 219, 0.98) 100%);
     background-position: center top;
-    background-size: 100% auto, 1400px auto;
-    background-attachment: scroll, fixed;
-    background-repeat: no-repeat, repeat-y;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
     color: var(--color-text);
     font-family: var(--font-body);
     font-size: var(--text-base);
@@ -287,7 +289,7 @@
     overflow-x: hidden;
   }
 
-  /* Subtle celestial grid texture overlay */
+  /* Archival ledger grid texture overlay */
   body::before {
     content: "";
     position: fixed;
