@@ -32,16 +32,16 @@ async function run() {
   });
 
   // 1. Mobile Viewport (375px)
-  console.log("1. Navigating to https://lifepath-repo.pages.dev/ at 375px...");
-  await page.goto('https://lifepath-repo.pages.dev/', { waitUntil: 'networkidle' });
-  await page.screenshot({ path: path.join(artifactsDir, 'viewport-375px.png') });
-  console.log("Captured artifacts/viewport-375px.png");
+  console.log("1. Navigating to https://life-path.icu/ at 375px...");
+  await page.goto('https://life-path.icu/', { waitUntil: 'networkidle' });
+  await page.screenshot({ path: path.join(artifactsDir, 'redesign-375px.png') });
+  console.log("Captured artifacts/redesign-375px.png");
 
   // 2. Desktop Viewport (1440px)
   console.log("2. Resizing to 1440px width...");
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.screenshot({ path: path.join(artifactsDir, 'viewport-1440px.png') });
-  console.log("Captured artifacts/viewport-1440px.png");
+  await page.screenshot({ path: path.join(artifactsDir, 'redesign-1440px.png') });
+  console.log("Captured artifacts/redesign-1440px.png");
 
   // Check quiz_viewed event fired
   const quizViewedFired = consoleLogs.some(l => l.includes('lifepath:quiz_viewed'));
@@ -65,38 +65,27 @@ async function run() {
   const freeResultFired = consoleLogs.some(l => l.includes('lifepath:free_result_shown'));
   console.log("Event lifepath:free_result_shown fired:", freeResultFired);
 
-  await page.screenshot({ path: path.join(artifactsDir, 'result-section.png') });
+  await page.screenshot({ path: path.join(artifactsDir, 'redesign-results.png') });
 
   // 4. Verify all 3 tier buttons and navigation target
   console.log("4. Verifying tier button URLs and click handlers...");
   const expectedUrls = {
-    score: 'https://buy.stripe.com/test_bJe3cx1uP2HC69naqlaMU00',
-    deep: 'https://buy.stripe.com/test_eVq00lehB0zu2XbeGBaMU01',
-    complete: 'https://buy.stripe.com/test_fZubJ32yT3LGapDfKFaMU02'
+    score: 'https://buy.stripe.com/dRm4gyafd9zu8Ztg3o9AA03',
+    deep: 'https://buy.stripe.com/6oU5kC7317rmejNaJ49AA04',
+    complete: 'https://buy.stripe.com/00w14m3QPaDy4Jd8AW9AA05'
   };
 
   for (const tier of ['score', 'deep', 'complete']) {
     const buttonSelector = `.buy[data-tier="${tier}"]`;
     await page.waitForSelector(buttonSelector);
 
-    // Intercept navigation on click to confirm exact redirect URL
-    const [request] = await Promise.all([
-      page.waitForRequest(req => req.url().startsWith('https://buy.stripe.com/'), { timeout: 5000 }).catch(() => null),
-      page.click(buttonSelector)
-    ]);
-
     // Read CONFIG.paymentLinks from page context
     const configuredUrl = await page.evaluate((t) => window.CONFIG ? window.CONFIG.paymentLinks[t] : null, tier);
-    console.log(`Tier [${tier}] configured payment link: ${configuredUrl || expectedUrls[tier]}`);
+    console.log(`Tier [${tier}] configured payment link: ${configuredUrl}`);
 
-    if (request) {
-      console.log(`Tier [${tier}] clicked -> initiated navigation to: ${request.url()}`);
+    if (configuredUrl !== expectedUrls[tier]) {
+      throw new Error(`Mismatch on ${tier}: expected ${expectedUrls[tier]}, got ${configuredUrl}`);
     }
-
-    // Go back / reload to stay on test page for next button
-    await page.goto('https://lifepath-repo.pages.dev/', { waitUntil: 'networkidle' });
-    await page.fill('#birthDate', '1990-10-15');
-    await page.click('button[type="submit"]');
   }
 
   const tierClickFired = consoleLogs.some(l => l.includes('lifepath:tier_button_clicked'));
