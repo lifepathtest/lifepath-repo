@@ -12,9 +12,9 @@
 ## 1. Non-Negotiable Experiment Controls (Code Freeze)
 During this 14-day window, the following are strictly frozen to preserve comparison validity:
 1. **Pricing Structure Frozen:**
-   - Score Tier: $1.99 (`test_bJe3cx1uP2HC69naqlaMU00`)
-   - Deep Report: $3.99 (`test_eVq00lehB0zu2XbeGBaMU01`)
-   - Complete Archetype: $6.99 (`test_fZubJ32yT3LGapDfKFaMU02`)
+   - Score Tier: $1.99 (`https://buy.stripe.com/dRm4gyafd9zu8Ztg3o9AA03`)
+   - Deep Report: $3.99 (`https://buy.stripe.com/6oU5kC7317rmejNaJ49AA04`)
+   - Complete Archetype: $6.99 (`https://buy.stripe.com/00w14m3QPaDy4Jd8AW9AA05`)
 2. **Copy & Visual Architecture Frozen:** No edits to headlines, archetypes, form flow, or checkout triggers.
 3. **Numerology Computation Frozen:** Pythagorean calculation logic must remain identical to commit `92a8716`.
 
