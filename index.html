@@ -3,328 +3,666 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Free Life Path Number Test — Discover Your Numerology Archetype</title>
-<meta name="description" content="Enter your birth date and get your Life Path Number free in seconds. Unlock your full Numerology Archetype profile from $1.99.">
+<title>Life Path — A Personal Numerology Ledger</title>
+<meta name="description" content="Enter your birth date and see the number behind it — a calm, private, one-page reading.">
 <link rel="canonical" href="https://life-path.icu/">
 <meta property="og:url" content="https://life-path.icu/">
-<meta property="og:title" content="Free Life Path Number Test">
-<meta property="og:description" content="Get your Life Path Number free in seconds, then unlock your full archetype profile.">
+<meta property="og:title" content="Life Path — A Personal Numerology Ledger">
+<meta property="og:description" content="Enter your birth date and see the number behind it — a calm, private, one-page reading.">
 <meta property="og:type" content="website">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="/mark.svg" type="image/svg+xml">
+
+<!-- Self-hosted WOFF2 fonts with font-display: swap (no external CDN dependencies) -->
+<link rel="stylesheet" href="/fonts/fonts.css">
+
 <style>
-  :root{
-    --paper:#EFE7D8;
-    --paper-line:#D9CDB4;
-    --ink:#1C2333;
-    --ink-soft:#4A5266;
-    --verdigris:#2F6F62;
-    --verdigris-deep:#1F4C43;
-    --gold-leaf:#8A6E32;
-    --white:#FBF9F4;
-    --radius-none:0;
-    --max-w:640px;
+  :root {
+    /* Primitives (The Ledger Design Tokens) */
+    --paper-50:  oklch(0.980 0.008 85);   /* #FAF7F0 fallback */
+    --paper-100: oklch(0.955 0.012 85);   /* #F3EFE6 fallback */
+    --paper-200: oklch(0.900 0.014 85);   /* #E5DFD1 fallback */
+    --ink-900:   oklch(0.200 0.020 262);  /* #1C2333 fallback */
+    --ink-700:   oklch(0.340 0.020 262);  /* #333C4F fallback */
+    --ink-500:   oklch(0.520 0.015 262);  /* #5E677B fallback */
+    --brass-600: oklch(0.580 0.120 70);   /* #B08A3E fallback */
+    --brass-700: oklch(0.480 0.120 70);   /* #8F6E2E fallback */
+    --brass-100: oklch(0.930 0.030 70);   /* #EFE5CD fallback */
+
+    /* Semantic Aliases */
+    --color-bg: var(--paper-50);
+    --color-surface: var(--paper-100);
+    --color-border: var(--paper-200);
+    --color-text: var(--ink-900);
+    --color-text-muted: var(--ink-500);
+    --color-cta: var(--ink-900);
+    --color-cta-hover: var(--ink-700);
+    --color-focus: var(--brass-100);
+
+    /* Typography */
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-footnote: 'Cormorant Garamond', Georgia, serif;
+
+    --text-hero: clamp(2.25rem, 1.8rem + 2.5vw, 3.75rem);
+    --text-lg:   clamp(1.1rem, 1.02rem + 0.35vw, 1.25rem);
+    --text-base: clamp(0.95rem, 0.92rem + 0.15vw, 1.05rem);
+
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    margin:0;
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Work Sans', -apple-system, sans-serif;
-    line-height:1.55;
-    -webkit-font-smoothing:antialiased;
-  }
-  ::selection{background:var(--verdigris); color:var(--white);}
-
-  a{color:var(--verdigris-deep);}
-  a:focus-visible, button:focus-visible, input:focus-visible{
-    outline:2px solid var(--verdigris-deep);
-    outline-offset:3px;
+  /* Fallback for browsers lacking oklch support */
+  @supports not (color: oklch(0.98 0.008 85)) {
+    :root {
+      --paper-50:  #FAF7F0;
+      --paper-100: #F3EFE6;
+      --paper-200: #E5DFD1;
+      --ink-900:   #1C2333;
+      --ink-700:   #333C4F;
+      --ink-500:   #5E677B;
+      --brass-600: #B08A3E;
+      --brass-700: #8F6E2E;
+      --brass-100: #EFE5CD;
+    }
   }
 
-  h1,h2,h3,.numeral{
-    font-family:'Fraunces', Georgia, serif;
-    font-weight:500;
-    letter-spacing:-0.01em;
-    margin:0;
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
 
-  .wrap{max-width:var(--max-w); margin:0 auto; padding:0 24px;}
+  ::selection { background: var(--brass-100); color: var(--ink-900); }
 
-  /* ---------- header / ledger rule ---------- */
-  .masthead{
-    border-bottom:1px solid var(--paper-line);
-    padding:20px 0;
-  }
-  .masthead .wrap{display:flex; justify-content:space-between; align-items:baseline;}
-  .masthead .mark{font-family:'Fraunces', serif; font-size:1.05rem; font-weight:600;}
-  .masthead .tag{font-size:0.78rem; color:var(--ink-soft);}
-
-  /* ---------- hero ---------- */
-  .hero{padding:56px 0 40px;}
-  .hero h1{font-size:2.15rem; line-height:1.18; max-width:15ch;}
-  .hero p.lede{
-    margin-top:16px; font-size:1.05rem; color:var(--ink-soft); max-width:46ch;
-  }
-  .hero .meta-line{
-    margin-top:22px; font-size:0.85rem; color:var(--ink-soft);
-    display:flex; gap:18px; flex-wrap:wrap;
-  }
-  .hero .meta-line span{border-left:1px solid var(--paper-line); padding-left:18px;}
-  .hero .meta-line span:first-child{border-left:none; padding-left:0;}
-
-  /* ---------- entry form (the ledger page) ---------- */
-  .ledger{
-    background:var(--white);
-    border:1px solid var(--paper-line);
-    padding:32px 28px;
-    margin-top:36px;
-  }
-  .ledger .field{margin-bottom:20px;}
-  .ledger label{
-    display:block; font-size:0.85rem; color:var(--ink-soft); margin-bottom:6px;
-  }
-  .ledger input{
-    width:100%; padding:12px 14px; font-size:1rem;
-    border:1px solid var(--paper-line); background:var(--paper);
-    font-family:'Work Sans', sans-serif; color:var(--ink);
-  }
-  .ledger .row{display:flex; gap:14px;}
-  .ledger .row .field{flex:1;}
-  .hint{font-size:0.78rem; color:var(--ink-soft); margin-top:5px;}
-
-  .btn-primary{
-    width:100%; padding:14px 20px; font-size:1rem; font-weight:500;
-    background:var(--verdigris-deep); color:var(--white); border:none;
-    cursor:pointer; font-family:'Work Sans', sans-serif;
-    transition:background 0.15s ease;
-  }
-  .btn-primary:hover{background:#173d35;}
-  .btn-primary:disabled{background:#B7AE99; cursor:not-allowed;}
-
-  .error-msg{
-    color:#8A3324; font-size:0.85rem; margin-top:10px; display:none;
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--brass-600);
+    outline-offset: 3px;
   }
 
-  /* ---------- result reveal ---------- */
-  .result{
-    display:none;
-    margin-top:44px;
-    text-align:center;
-    padding:40px 20px;
-    border-top:1px solid var(--paper-line);
-    border-bottom:1px solid var(--paper-line);
-  }
-  .result .eyebrow{font-size:0.85rem; color:var(--ink-soft);}
-  .result .numeral{
-    font-size:5.5rem; line-height:1; margin:14px 0 6px;
-    color:var(--verdigris-deep);
-  }
-  .result .archetype-name{font-size:1.3rem; margin-bottom:14px;}
-  .result .free-blurb{
-    max-width:44ch; margin:0 auto; color:var(--ink-soft); font-size:0.98rem;
-  }
-  .result .second-number{
-    margin-top:26px; font-size:0.88rem; color:var(--ink-soft);
-  }
-  .result .second-number strong{color:var(--ink); font-family:'Fraunces', serif; font-weight:600;}
+  .wrap { max-width: 760px; margin-inline: auto; padding-inline: 1.5rem; }
 
-  /* ---------- locked teaser ---------- */
-  .teaser{
-    margin-top:30px; padding:22px 20px; background:var(--white);
-    border:1px dashed var(--paper-line); font-size:0.92rem; color:var(--ink-soft);
+  /* HEADER */
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
   }
-  .teaser strong{color:var(--ink); display:block; margin-bottom:6px; font-family:'Fraunces', serif; font-weight:600; font-size:1.02rem;}
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    color: var(--ink-900);
+  }
+  .brand svg { width: 24px; height: 24px; flex-shrink: 0; }
+  .brand span {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+  }
+  .site-nav {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+  }
+  .site-nav a {
+    text-decoration: none;
+    transition: color 150ms var(--ease-out);
+  }
+  .site-nav a:hover { color: var(--ink-900); }
 
-  /* ---------- pricing ledger entries ---------- */
-  .tiers{margin-top:52px;}
-  .tiers h2{font-size:1.5rem; text-align:center; margin-bottom:8px;}
-  .tiers .sub{text-align:center; color:var(--ink-soft); font-size:0.92rem; margin-bottom:30px;}
-
-  .tier{
-    border-top:1px solid var(--paper-line);
-    padding:26px 0;
-    display:grid;
-    grid-template-columns:44px 1fr auto;
-    gap:18px;
-    align-items:start;
+  /* HERO */
+  .hero {
+    padding-block: clamp(2.5rem, 5vw, 4.25rem) clamp(1.5rem, 3vw, 2.5rem);
   }
-  .tier:last-child{border-bottom:1px solid var(--paper-line);}
-  .tier .roman{
-    font-family:'Fraunces', serif; font-size:1.4rem; color:var(--gold-leaf); font-weight:500;
+  .hero-tag {
+    font-size: 0.78rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-block-end: 0.75rem;
   }
-  .tier .name{font-family:'Fraunces', serif; font-size:1.15rem; font-weight:600;}
-  .tier .badge{
-    font-size:0.72rem; color:var(--verdigris-deep); border:1px solid var(--verdigris);
-    padding:2px 8px; margin-left:10px; display:inline-block; vertical-align:middle;
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--text-hero);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 0 0 1.15rem;
+    color: var(--ink-700);
+    max-width: 17ch;
   }
-  .tier .desc{font-size:0.9rem; color:var(--ink-soft); margin-top:6px; max-width:40ch;}
-  .tier .price{font-family:'Fraunces', serif; font-size:1.3rem; text-align:right; white-space:nowrap;}
-  .tier .buy{
-    margin-top:10px; padding:9px 16px; font-size:0.85rem;
-    background:transparent; border:1px solid var(--verdigris-deep); color:var(--verdigris-deep);
-    cursor:pointer; font-family:'Work Sans', sans-serif; white-space:nowrap;
-  }
-  .tier .buy:hover{background:var(--verdigris-deep); color:var(--white);}
-  .tier .buy:disabled{border-color:#B7AE99; color:#B7AE99; cursor:not-allowed;}
-  .tier.deep .name{color:var(--verdigris-deep);}
-
-  @media (max-width:520px){
-    .tier{grid-template-columns:32px 1fr; }
-    .tier .price-col{grid-column:1 / -1; display:flex; justify-content:space-between; align-items:center; margin-top:10px;}
+  .hero-sub {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    max-width: 50ch;
+    margin: 0;
+    line-height: 1.55;
   }
 
-  .sample-toggle{
-    text-align:center; margin-top:26px; font-size:0.88rem;
+  /* LEDGER CARD (FORM) */
+  .ledger-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    margin-block: clamp(1.75rem, 4vw, 2.75rem);
   }
-  .sample-toggle button{
-    background:none; border:none; color:var(--verdigris-deep); text-decoration:underline;
-    cursor:pointer; font-family:'Work Sans', sans-serif; font-size:0.88rem; padding:0;
-  }
-  .sample-excerpt{
-    display:none; margin-top:16px; padding:20px; background:var(--white);
-    border:1px solid var(--paper-line); font-size:0.9rem; color:var(--ink-soft); text-align:left;
-  }
-  .sample-excerpt p{margin:0 0 10px;}
-  .sample-excerpt strong{color:var(--ink);}
-
-  footer{
-    margin-top:64px; padding:28px 0 60px; border-top:1px solid var(--paper-line);
-    font-size:0.8rem; color:var(--ink-soft); text-align:center;
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    *{animation:none !important; transition:none !important;}
+  @media (min-width: 680px) {
+    .ledger-card {
+      grid-template-columns: auto 1fr;
+      align-items: start;
+    }
   }
 
-  .reveal-anim{animation:stampIn 0.4s ease-out;}
-  @keyframes stampIn{
-    from{opacity:0; transform:translateY(6px) scale(0.98);}
-    to{opacity:1; transform:translateY(0) scale(1);}
+  .numeral-stamp {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 1.5px solid var(--brass-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 2.85rem;
+    font-weight: 500;
+    color: var(--brass-700);
+    flex-shrink: 0;
+    justify-self: center;
+    margin-top: 0.5rem;
+    background: var(--color-bg);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .form-header h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: 1.25rem;
+    margin: 0 0 0.25rem;
+    color: var(--ink-700);
+  }
+  .field { margin: 0; }
+  label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--ink-700);
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+  .field-note {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-top: 0.3rem;
+    margin-bottom: 0;
+  }
+  input {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    transition: border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+  }
+  input::placeholder { color: var(--color-text-muted); opacity: 0.7; }
+  input:hover { border-color: var(--color-text-muted); }
+  input:focus {
+    outline: none;
+    border-color: var(--brass-600);
+    box-shadow: 0 0 0 3px var(--brass-100);
+  }
+  input:disabled {
+    background: var(--color-border);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+  }
+
+  .privacy-line {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  button.cta {
+    appearance: none;
+    border: none;
+    cursor: pointer;
+    background: var(--color-cta);
+    color: var(--paper-50);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-base);
+    padding: 0.9rem 1.5rem;
+    border-radius: 8px;
+    transition: background 150ms var(--ease-out), transform 150ms var(--ease-out);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+  button.cta:hover { background: var(--color-cta-hover); }
+  button.cta:active { transform: translateY(1px); }
+  button.cta:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--brass-100); }
+  button.cta:disabled {
+    background: var(--color-border);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+  }
+
+  .error-box {
+    display: none;
+    padding: 0.75rem 0.9rem;
+    border-radius: 6px;
+    background: #FDF2F2;
+    border: 1px solid #F8B4B4;
+    color: #9B1C1C;
+    font-size: 0.85rem;
+  }
+
+  /* RESULT SECTION */
+  .result-section {
+    display: none;
+    margin-top: 2rem;
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    scroll-margin-top: 2rem;
+  }
+  .result-header {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .result-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--ink-700);
+    margin: 0 0 0.5rem;
+  }
+  .result-blurb {
+    font-size: 1.05rem;
+    color: var(--ink-900);
+    line-height: 1.6;
+    margin: 0 0 1rem;
+  }
+  .expression-line {
+    display: none;
+    font-size: 0.92rem;
+    color: var(--brass-700);
+    background: var(--brass-100);
+    padding: 0.65rem 0.9rem;
+    border-radius: 6px;
+    margin: 0;
+  }
+
+  /* TEASER & TIERS */
+  .tiers-section {
+    display: none;
+    margin-top: 3rem;
+  }
+  .tiers-header {
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+  .tiers-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.65rem;
+    font-weight: 500;
+    margin: 0 0 0.5rem;
+    color: var(--ink-700);
+  }
+  .tiers-header p {
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    margin: 0;
+    max-width: 54ch;
+  }
+
+  .tier-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  @media (min-width: 680px) {
+    .tier-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .tier-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 150ms var(--ease-out), border-color 150ms var(--ease-out);
+  }
+  .tier-card.featured {
+    border-color: var(--brass-600);
+    background: var(--color-bg);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+  }
+  .tier-card:hover { border-color: var(--ink-700); }
+  .tier-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--brass-700);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .tier-name {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0 0 0.4rem;
+    color: var(--ink-700);
+  }
+  .tier-price {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--ink-900);
+    margin: 0 0 0.85rem;
+  }
+  .tier-desc {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    margin: 0 0 1.25rem;
+    flex-grow: 1;
+  }
+  .tier-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    font-size: 0.82rem;
+    color: var(--ink-700);
+  }
+  .tier-features li {
+    padding-block: 0.35rem;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .tier-features li::before {
+    content: "—";
+    color: var(--brass-600);
+  }
+
+  .btn-tier {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--ink-900);
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: background 150ms var(--ease-out), border-color 150ms var(--ease-out);
+  }
+  .btn-tier:hover {
+    background: var(--ink-900);
+    color: var(--paper-50);
+    border-color: var(--ink-900);
+  }
+  .tier-card.featured .btn-tier {
+    background: var(--ink-900);
+    color: var(--paper-50);
+    border-color: var(--ink-900);
+  }
+  .tier-card.featured .btn-tier:hover {
+    background: var(--ink-700);
+  }
+
+  /* SAMPLE EXCERPT */
+  .sample-box {
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    border-radius: 8px;
+  }
+  .sample-toggle {
+    background: none;
+    border: none;
+    color: var(--ink-700);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .sample-content {
+    display: none;
+    margin-top: 1rem;
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  .sample-content.visible { display: block; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--color-border);
+    padding-block: 2.5rem 3rem;
+    margin-block-start: 4rem;
+  }
+  footer .disclaimer {
+    font-family: var(--font-footnote);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    max-width: 62ch;
+    margin-block-end: 1.25rem;
+    line-height: 1.5;
+  }
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+  }
+  .footer-links a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 150ms var(--ease-out);
+  }
+  .footer-links a:hover { color: var(--ink-900); }
+  .footer-meta {
+    margin-block-start: 1rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 </style>
 </head>
 <body>
 
-<header class="masthead">
-  <div class="wrap">
-    <span class="mark">Life Path</span>
-    <span class="tag">A personal numerology ledger</span>
-  </div>
+<header class="site-header wrap">
+  <a href="/" class="brand">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="none" stroke="#1C2333" stroke-width="7" stroke-linecap="round">
+        <line x1="25" y1="30" x2="75" y2="30"/>
+        <line x1="15" y1="50" x2="85" y2="50"/>
+        <line x1="20" y1="70" x2="70" y2="70"/>
+      </g>
+      <circle cx="65" cy="50" r="10" fill="#B08A3E"/>
+    </svg>
+    <span>Life Path</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    <a href="#how-it-works">How it works</a>
+    <a href="#privacy">Privacy</a>
+    <a href="/legacy.html" style="opacity:0.6;">Legacy layout</a>
+  </nav>
 </header>
 
 <main class="wrap">
-
   <section class="hero">
-    <h1>Free Life Path Number Test — see the pattern behind your birth date</h1>
-    <p class="lede">Every date reduces to a single number. That number has been read as a map of temperament for centuries. Enter your birth date and see yours free, instantly.</p>
-    <div class="meta-line">
-      <span>1 birth date</span>
-      <span>10 seconds</span>
-      <span>Free result, always</span>
-    </div>
+    <p class="hero-tag">A personal numerology ledger</p>
+    <h1>Every date reduces to a single number.</h1>
+    <p class="hero-sub">Enter your birth date and see the number behind it — a calm, private reading you can reflect on or leave behind.</p>
+  </section>
 
-    <form class="ledger" id="quizForm" novalidate>
+  <section class="ledger-card" id="how-it-works" aria-labelledby="form-heading">
+    <div class="numeral-stamp" aria-hidden="true" id="numeralDisplay">?</div>
+    
+    <form id="lifePathForm">
+      <div class="form-header">
+        <h2 id="form-heading">Find your number</h2>
+      </div>
+
       <div class="field">
-        <label for="fullName">Full birth name (optional — unlocks your Expression Number)</label>
-        <input type="text" id="fullName" name="fullName" autocomplete="name" placeholder="e.g. Jordan Alexis Rivera">
+        <label for="fullName">Full birth name (optional)</label>
+        <input type="text" id="fullName" name="fullName" placeholder="e.g. Ada Lovelace" autocomplete="name">
+        <p class="field-note">Enter your name to also calculate your Expression Number free — no extra step.</p>
       </div>
-      <div class="row">
-        <div class="field">
-          <label for="birthDate">Birth date</label>
-          <input type="date" id="birthDate" name="birthDate" required>
-        </div>
+
+      <div class="field">
+        <label for="birthDate">Birth date</label>
+        <input type="date" id="birthDate" name="birthDate" required aria-describedby="privacy-note">
       </div>
-      <div class="hint">Nothing you enter here is stored or sent anywhere until you choose to unlock a report.</div>
-      <p class="error-msg" id="errorMsg" role="alert">Enter a valid birth date to continue.</p>
-      <button type="submit" class="btn-primary" id="submitBtn">Reveal my Life Path Number</button>
+
+      <div class="error-box" id="errorMsg" role="alert">Please enter a valid birth date to calculate your reading.</div>
+
+      <p class="privacy-line" id="privacy-note">Nothing you enter here leaves your browser unless you choose to order a full report.</p>
+
+      <button type="submit" class="cta" id="submitBtn">Calculate my Life Path number</button>
     </form>
   </section>
 
-  <section class="result reveal-anim" id="resultSection" aria-live="polite">
-    <div class="eyebrow">Your Life Path Number</div>
-    <div class="numeral" id="lifePathNumeral">—</div>
-    <div class="archetype-name" id="archetypeName"></div>
-    <p class="free-blurb" id="freeBlurb"></p>
-    <div class="second-number" id="expressionLine" style="display:none;"></div>
+  <!-- RESULT SECTION -->
+  <section class="result-section" id="resultSection" aria-live="polite">
+    <div class="result-header">
+      <h2 class="result-title">Life Path <span id="lifePathNumeral"></span>: <span id="archetypeName"></span></h2>
+      <p class="result-blurb" id="freeBlurb"></p>
+      <p class="expression-line" id="expressionLine"></p>
+    </div>
+
+    <!-- TIERS SECTION -->
+    <div class="tiers-section" id="tiersSection">
+      <div class="tiers-header">
+        <h2>Unlock Your Complete Profile</h2>
+        <p>Three calibrated tiers mirror our research funnel. Every purchase directly supports independent algorithmic analysis.</p>
+      </div>
+
+      <div class="tier-grid">
+        <!-- Tier 1 -->
+        <div class="tier-card">
+          <div>
+            <span class="tier-badge">Essential</span>
+            <h3 class="tier-name">Score Tier</h3>
+            <div class="tier-price">$1.99</div>
+            <p class="tier-desc">Your complete numerical score profile with verified archetype classification.</p>
+            <ul class="tier-features">
+              <li>Full Life Path classification</li>
+              <li>Core archetype one-liner</li>
+              <li>Hand-prepared fulfillment</li>
+            </ul>
+          </div>
+          <button type="button" class="btn-tier buy" data-tier="score">Unlock Score ($1.99)</button>
+        </div>
+
+        <!-- Tier 2 -->
+        <div class="tier-card featured">
+          <div>
+            <span class="tier-badge">Most Comprehensive</span>
+            <h3 class="tier-name">Deep Report</h3>
+            <div class="tier-price">$3.99</div>
+            <p class="tier-desc">Multi-page deep analysis detailing how your Life Path and Expression Numbers interact.</p>
+            <ul class="tier-features">
+              <li>Full Life Path & Expression synthesis</li>
+              <li>Core friction and leverage points</li>
+              <li>Detailed archetype breakdown</li>
+            </ul>
+          </div>
+          <button type="button" class="btn-tier buy" data-tier="deep">Unlock Deep Report ($3.99)</button>
+        </div>
+
+        <!-- Tier 3 -->
+        <div class="tier-card">
+          <div>
+            <span class="tier-badge">Archive</span>
+            <h3 class="tier-name">Complete Archetype</h3>
+            <div class="tier-price">$6.99</div>
+            <p class="tier-desc">The exhaustive numerical ledger profile covering lifecycle cycles and personal timing.</p>
+            <ul class="tier-features">
+              <li>All Deep Report deliverables</li>
+              <li>3-year cycle breakdown</li>
+              <li>Full personal numerology folio</li>
+            </ul>
+          </div>
+          <button type="button" class="btn-tier buy" data-tier="complete">Unlock Complete ($6.99)</button>
+        </div>
+      </div>
+
+      <!-- Sample excerpt -->
+      <div class="sample-box">
+        <button type="button" class="sample-toggle" id="sampleToggleBtn">Read a sample Deep Report excerpt</button>
+        <div class="sample-content" id="sampleContent">
+          <p><strong>Overall Summary</strong><br>Your numbers point to someone who builds trust slowly and completely — once given, it rarely needs re-earning. You tend to weigh a decision fully before acting, then act without second-guessing.</p>
+          <p><strong>How Your Numbers Interact</strong><br>Your Life Path favors structure; your Expression favors connection. Most of your friction shows up when one is asked to move faster than the other is ready for.</p>
+          <p><strong>Your Numerical Archetype</strong><br>You lean closest to <em>The Steward</em> — not because you avoid change, but because you insist on carrying people through it carefully.</p>
+        </div>
+      </div>
+    </div>
   </section>
-
-  <div class="teaser" id="teaserBox" style="display:none;">
-    <strong>Your full Archetype profile is locked</strong>
-    How your Life Path Number and Expression Number interact, what tends to challenge you, and which of the twelve Numerical Archetypes you most resemble — unlocked below.
-  </div>
-
-  <section class="tiers" id="tiersSection" style="display:none;">
-    <h2>Choose your report</h2>
-    <p class="sub">One-time payment. No subscription. Delivered to the email you use at checkout.</p>
-
-    <div class="tier">
-      <div class="roman">I</div>
-      <div>
-        <div class="name">Score Report</div>
-        <div class="desc">Your Life Path and Expression Numbers in full, with the meaning of each individual digit.</div>
-      </div>
-      <div class="price-col">
-        <div class="price">$1.99</div>
-        <button class="buy" data-tier="score">Unlock</button>
-      </div>
-    </div>
-
-    <div class="tier deep">
-      <div class="roman">II</div>
-      <div>
-        <div class="name">Deep Report <span class="badge">Most popular</span></div>
-        <div class="desc">Everything in Score, plus a written reading of your Numerical Archetype and how your numbers interact.</div>
-      </div>
-      <div class="price-col">
-        <div class="price">$3.99</div>
-        <button class="buy" data-tier="deep">Unlock</button>
-      </div>
-    </div>
-
-    <div class="tier">
-      <div class="roman">III</div>
-      <div>
-        <div class="name">Complete Report</div>
-        <div class="desc">Everything in Deep, plus a printable Certificate of Reading with your verification ID.</div>
-      </div>
-      <div class="price-col">
-        <div class="price">$6.99</div>
-        <button class="buy" data-tier="complete">Unlock</button>
-      </div>
-    </div>
-
-    <div class="sample-toggle">
-      <button type="button" id="sampleToggleBtn">See a sample Deep Report excerpt</button>
-    </div>
-    <div class="sample-excerpt" id="sampleExcerpt">
-      <p><strong>Overall Summary</strong><br>Your numbers point to someone who builds trust slowly and completely — once given, it rarely needs re-earning. You tend to weigh a decision fully before acting, then act without second-guessing.</p>
-      <p><strong>How Your Numbers Interact</strong><br>Your Life Path favors structure; your Expression favors connection. Most of your friction shows up when one is asked to move faster than the other is ready for.</p>
-      <p><strong>Your Numerical Archetype</strong><br>You lean closest to <em>The Steward</em> — not because you avoid change, but because you insist on carrying people through it carefully.</p>
-      <p style="margin-top:14px; font-size:0.8rem;">↑ Illustrative excerpt. Your actual report is generated from your specific numbers.</p>
-    </div>
-  </section>
-
 </main>
 
-<footer>
-  This is a self-insight tool for reflection and entertainment, not a professional or clinical reading.<br>
-  © 2026 life-path.icu · Built on the APEX quiz-funnel pattern
+<footer class="wrap" id="privacy">
+  <p class="disclaimer">Numerology is offered here for reflection and entertainment. It isn't a substitute for professional, medical, financial, or legal advice.</p>
+  <div class="footer-links">
+    <a href="#privacy">Privacy policy</a>
+    <a href="mailto:support@life-path.icu">Contact</a>
+    <a href="https://github.com/lifepathtest/lifepath-repo">About APEX Business Systems Ltd.</a>
+  </div>
+  <p class="footer-meta">© <span id="year">2026</span> Life Path · life-path.icu · Built on the APEX quiz-funnel pattern</p>
 </footer>
 
 <script>
 "use strict";
 
 /* =========================================================================
-   CONFIGURATION — fill in before this page goes live.
-   Create three Stripe Payment Links (one-time payment, one per tier).
-   In each Payment Link's settings, add two custom text fields:
-     "Full birth name" and "Birth date" — this is how you'll receive the
-     inputs needed to fulfil the report by hand during the test window,
-     since no report-generation backend is wired up yet (see notes.md).
+   CONFIGURATION — Stripe Live Mode Payment Links
    ========================================================================= */
 const CONFIG = {
   paymentLinks: {
@@ -334,18 +672,18 @@ const CONFIG = {
   }
 };
 
-/* ---------- numerology: pure functions, no external calls ---------- */
+/* ---------- numerology: pure functions (Pythagorean engine) ---------- */
 
 const MASTER_NUMBERS = new Set([11, 22, 33]);
 
 function digitSum(n) {
   return String(Math.abs(n))
     .split("")
-    .reduce((sum, ch) => sum + Number(ch), 0);
+    .reduce(function (sum, ch) { return sum + Number(ch); }, 0);
 }
 
 function reduceNumber(n) {
-  let value = n;
+  var value = n;
   while (value > 9 && !MASTER_NUMBERS.has(value)) {
     value = digitSum(value);
   }
@@ -353,19 +691,19 @@ function reduceNumber(n) {
 }
 
 function calculateLifePathNumber(isoDate) {
-  const [yearStr, monthStr, dayStr] = isoDate.split("-");
-  const year = Number(yearStr);
-  const month = Number(monthStr);
-  const day = Number(dayStr);
+  var parts = isoDate.split("-");
+  var year = Number(parts[0]);
+  var month = Number(parts[1]);
+  var day = Number(parts[2]);
 
-  const reducedMonth = reduceNumber(month);
-  const reducedDay = reduceNumber(day);
-  const reducedYear = reduceNumber(digitSum(year));
+  var reducedMonth = reduceNumber(month);
+  var reducedDay = reduceNumber(day);
+  var reducedYear = reduceNumber(digitSum(year));
 
   return reduceNumber(reducedMonth + reducedDay + reducedYear);
 }
 
-const LETTER_VALUES = {
+var LETTER_VALUES = {
   a: 1, j: 1, s: 1,
   b: 2, k: 2, t: 2,
   c: 3, l: 3, u: 3,
@@ -378,15 +716,15 @@ const LETTER_VALUES = {
 };
 
 function calculateExpressionNumber(fullName) {
-  const letters = fullName.toLowerCase().replace(/[^a-z]/g, "").split("");
+  var letters = fullName.toLowerCase().replace(/[^a-z]/g, "").split("");
   if (letters.length === 0) return null;
-  const total = letters.reduce((sum, ch) => sum + (LETTER_VALUES[ch] || 0), 0);
+  var total = letters.reduce(function (sum, ch) { return sum + (LETTER_VALUES[ch] || 0); }, 0);
   return reduceNumber(total);
 }
 
-/* ---------- content ---------- */
+/* ---------- content archetypes ---------- */
 
-const ARCHETYPES = {
+var ARCHETYPES = {
   1: { name: "The Pioneer", blurb: "You default to starting things rather than waiting for permission. Independence isn't a preference for you — it's closer to a requirement." },
   2: { name: "The Diplomat", blurb: "You read a room before you read the agenda. Harmony matters to you more than being the one who's right." },
   3: { name: "The Storyteller", blurb: "You process the world by describing it — out loud, in writing, or in whatever form is closest at hand." },
@@ -401,10 +739,8 @@ const ARCHETYPES = {
   33: { name: "The Healer", blurb: "You carry other people's weight more easily than your own. A master number — your instinct to teach and to tend runs deeper than most." }
 };
 
-/* ---------- instrumentation hooks ----------
-   No analytics vendor is wired in. These are plain DOM CustomEvents so you
-   can attach GA4 / Plausible / PostHog / whatever you're already running
-   without me guessing at a vendor integration I can't verify from here. */
+/* ---------- telemetry instrumentation ---------- */
+
 function track(eventName, detail) {
   console.log("lifepath:" + eventName, detail || {});
   window.dispatchEvent(new CustomEvent("lifepath:" + eventName, { detail: detail || {} }));
@@ -412,75 +748,82 @@ function track(eventName, detail) {
 
 /* ---------- UI wiring ---------- */
 
-const form = document.getElementById("quizForm");
-const errorMsg = document.getElementById("errorMsg");
-const resultSection = document.getElementById("resultSection");
-const lifePathNumeral = document.getElementById("lifePathNumeral");
-const archetypeName = document.getElementById("archetypeName");
-const freeBlurb = document.getElementById("freeBlurb");
-const expressionLine = document.getElementById("expressionLine");
-const teaserBox = document.getElementById("teaserBox");
-const tiersSection = document.getElementById("tiersSection");
+document.addEventListener("DOMContentLoaded", function () {
+  var form = document.getElementById("lifePathForm");
+  var errorMsg = document.getElementById("errorMsg");
+  var resultSection = document.getElementById("resultSection");
+  var lifePathNumeral = document.getElementById("lifePathNumeral");
+  var archetypeName = document.getElementById("archetypeName");
+  var freeBlurb = document.getElementById("freeBlurb");
+  var expressionLine = document.getElementById("expressionLine");
+  var numeralDisplay = document.getElementById("numeralDisplay");
+  var tiersSection = document.getElementById("tiersSection");
+  var sampleToggleBtn = document.getElementById("sampleToggleBtn");
+  var sampleContent = document.getElementById("sampleContent");
 
-track("quiz_viewed");
+  track("quiz_viewed");
 
-form.addEventListener("submit", function (event) {
-  event.preventDefault();
-  const dateValue = document.getElementById("birthDate").value;
-  const nameValue = document.getElementById("fullName").value.trim();
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var dateVal = document.getElementById("birthDate").value;
+    var nameVal = document.getElementById("fullName").value.trim();
 
-  if (!dateValue) {
-    errorMsg.style.display = "block";
-    return;
-  }
-  errorMsg.style.display = "none";
-
-  const lifePath = calculateLifePathNumber(dateValue);
-  const archetype = ARCHETYPES[lifePath];
-
-  lifePathNumeral.textContent = lifePath;
-  archetypeName.textContent = archetype.name;
-  freeBlurb.textContent = archetype.blurb;
-
-  if (nameValue) {
-    const expression = calculateExpressionNumber(nameValue);
-    if (expression !== null) {
-      expressionLine.style.display = "block";
-      expressionLine.innerHTML = "Your Expression Number is <strong>" + expression + "</strong> — unlocked below, in the full report.";
-    }
-  } else {
-    expressionLine.style.display = "none";
-  }
-
-  resultSection.style.display = "block";
-  teaserBox.style.display = "block";
-  tiersSection.style.display = "block";
-  resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
-
-  track("free_result_shown", { lifePath: lifePath });
-});
-
-document.querySelectorAll(".buy").forEach(function (button) {
-  button.addEventListener("click", function () {
-    const tier = button.getAttribute("data-tier");
-    const link = CONFIG.paymentLinks[tier];
-    track("tier_button_clicked", { tier: tier });
-
-    if (!link) {
-      // Honest failure state — never a silent no-op, never a fake redirect.
-      alert("This tier isn't connected to a payment link yet. Add the Stripe Payment Link URL in CONFIG.paymentLinks before launch.");
+    if (!dateVal) {
+      errorMsg.style.display = "block";
       return;
     }
-    window.location.href = link;
-  });
-});
+    errorMsg.style.display = "none";
 
-const sampleToggleBtn = document.getElementById("sampleToggleBtn");
-const sampleExcerpt = document.getElementById("sampleExcerpt");
-sampleToggleBtn.addEventListener("click", function () {
-  const isOpen = sampleExcerpt.style.display === "block";
-  sampleExcerpt.style.display = isOpen ? "none" : "block";
-  sampleToggleBtn.textContent = isOpen ? "See a sample Deep Report excerpt" : "Hide sample excerpt";
+    var lifePath = calculateLifePathNumber(dateVal);
+    var archetype = ARCHETYPES[lifePath] || { name: "The Architect", blurb: "Guided by balance and inquiry." };
+
+    numeralDisplay.textContent = lifePath;
+    lifePathNumeral.textContent = lifePath;
+    archetypeName.textContent = archetype.name;
+    freeBlurb.textContent = archetype.blurb;
+
+    if (nameVal) {
+      var expression = calculateExpressionNumber(nameVal);
+      if (expression !== null) {
+        expressionLine.style.display = "block";
+        expressionLine.innerHTML = "Your Expression Number is <strong>" + expression + "</strong> — included in full reports.";
+      }
+    } else {
+      expressionLine.style.display = "none";
+    }
+
+    resultSection.style.display = "block";
+    tiersSection.style.display = "block";
+    resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    track("free_result_shown", { lifePath: lifePath });
+  });
+
+  document.querySelectorAll(".buy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var tier = btn.getAttribute("data-tier");
+      var link = CONFIG.paymentLinks[tier];
+      track("tier_button_clicked", { tier: tier });
+      if (!link) {
+        alert("Payment link is not configured.");
+        return;
+      }
+      window.location.href = link;
+    });
+  });
+
+  if (sampleToggleBtn && sampleContent) {
+    sampleToggleBtn.addEventListener("click", function () {
+      var isOpen = sampleContent.classList.contains("visible");
+      if (isOpen) {
+        sampleContent.classList.remove("visible");
+        sampleToggleBtn.textContent = "Read a sample Deep Report excerpt";
+      } else {
+        sampleContent.classList.add("visible");
+        sampleToggleBtn.textContent = "Hide sample excerpt";
+      }
+    });
+  }
 });
 </script>
 </body>

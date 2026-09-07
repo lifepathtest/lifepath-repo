@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free Life Path Number Test — Discover Your Numerology Archetype</title>
+<meta name="description" content="Enter your birth date and get your Life Path Number free in seconds. Unlock your full Numerology Archetype profile from $1.99.">
+<link rel="canonical" href="https://life-path.icu/">
+<meta property="og:url" content="https://life-path.icu/">
+<meta property="og:title" content="Free Life Path Number Test">
+<meta property="og:description" content="Get your Life Path Number free in seconds, then unlock your full archetype profile.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFE7D8;
+    --paper-line:#D9CDB4;
+    --ink:#1C2333;
+    --ink-soft:#4A5266;
+    --verdigris:#2F6F62;
+    --verdigris-deep:#1F4C43;
+    --gold-leaf:#8A6E32;
+    --white:#FBF9F4;
+    --radius-none:0;
+    --max-w:640px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', -apple-system, sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--verdigris); color:var(--white);}
+
+  a{color:var(--verdigris-deep);}
+  a:focus-visible, button:focus-visible, input:focus-visible{
+    outline:2px solid var(--verdigris-deep);
+    outline-offset:3px;
+  }
+
+  h1,h2,h3,.numeral{
+    font-family:'Fraunces', Georgia, serif;
+    font-weight:500;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+
+  .wrap{max-width:var(--max-w); margin:0 auto; padding:0 24px;}
+
+  /* ---------- header / ledger rule ---------- */
+  .masthead{
+    border-bottom:1px solid var(--paper-line);
+    padding:20px 0;
+  }
+  .masthead .wrap{display:flex; justify-content:space-between; align-items:baseline;}
+  .masthead .mark{font-family:'Fraunces', serif; font-size:1.05rem; font-weight:600;}
+  .masthead .tag{font-size:0.78rem; color:var(--ink-soft);}
+
+  /* ---------- hero ---------- */
+  .hero{padding:56px 0 40px;}
+  .hero h1{font-size:2.15rem; line-height:1.18; max-width:15ch;}
+  .hero p.lede{
+    margin-top:16px; font-size:1.05rem; color:var(--ink-soft); max-width:46ch;
+  }
+  .hero .meta-line{
+    margin-top:22px; font-size:0.85rem; color:var(--ink-soft);
+    display:flex; gap:18px; flex-wrap:wrap;
+  }
+  .hero .meta-line span{border-left:1px solid var(--paper-line); padding-left:18px;}
+  .hero .meta-line span:first-child{border-left:none; padding-left:0;}
+
+  /* ---------- entry form (the ledger page) ---------- */
+  .ledger{
+    background:var(--white);
+    border:1px solid var(--paper-line);
+    padding:32px 28px;
+    margin-top:36px;
+  }
+  .ledger .field{margin-bottom:20px;}
+  .ledger label{
+    display:block; font-size:0.85rem; color:var(--ink-soft); margin-bottom:6px;
+  }
+  .ledger input{
+    width:100%; padding:12px 14px; font-size:1rem;
+    border:1px solid var(--paper-line); background:var(--paper);
+    font-family:'Work Sans', sans-serif; color:var(--ink);
+  }
+  .ledger .row{display:flex; gap:14px;}
+  .ledger .row .field{flex:1;}
+  .hint{font-size:0.78rem; color:var(--ink-soft); margin-top:5px;}
+
+  .btn-primary{
+    width:100%; padding:14px 20px; font-size:1rem; font-weight:500;
+    background:var(--verdigris-deep); color:var(--white); border:none;
+    cursor:pointer; font-family:'Work Sans', sans-serif;
+    transition:background 0.15s ease;
+  }
+  .btn-primary:hover{background:#173d35;}
+  .btn-primary:disabled{background:#B7AE99; cursor:not-allowed;}
+
+  .error-msg{
+    color:#8A3324; font-size:0.85rem; margin-top:10px; display:none;
+  }
+
+  /* ---------- result reveal ---------- */
+  .result{
+    display:none;
+    margin-top:44px;
+    text-align:center;
+    padding:40px 20px;
+    border-top:1px solid var(--paper-line);
+    border-bottom:1px solid var(--paper-line);
+  }
+  .result .eyebrow{font-size:0.85rem; color:var(--ink-soft);}
+  .result .numeral{
+    font-size:5.5rem; line-height:1; margin:14px 0 6px;
+    color:var(--verdigris-deep);
+  }
+  .result .archetype-name{font-size:1.3rem; margin-bottom:14px;}
+  .result .free-blurb{
+    max-width:44ch; margin:0 auto; color:var(--ink-soft); font-size:0.98rem;
+  }
+  .result .second-number{
+    margin-top:26px; font-size:0.88rem; color:var(--ink-soft);
+  }
+  .result .second-number strong{color:var(--ink); font-family:'Fraunces', serif; font-weight:600;}
+
+  /* ---------- locked teaser ---------- */
+  .teaser{
+    margin-top:30px; padding:22px 20px; background:var(--white);
+    border:1px dashed var(--paper-line); font-size:0.92rem; color:var(--ink-soft);
+  }
+  .teaser strong{color:var(--ink); display:block; margin-bottom:6px; font-family:'Fraunces', serif; font-weight:600; font-size:1.02rem;}
+
+  /* ---------- pricing ledger entries ---------- */
+  .tiers{margin-top:52px;}
+  .tiers h2{font-size:1.5rem; text-align:center; margin-bottom:8px;}
+  .tiers .sub{text-align:center; color:var(--ink-soft); font-size:0.92rem; margin-bottom:30px;}
+
+  .tier{
+    border-top:1px solid var(--paper-line);
+    padding:26px 0;
+    display:grid;
+    grid-template-columns:44px 1fr auto;
+    gap:18px;
+    align-items:start;
+  }
+  .tier:last-child{border-bottom:1px solid var(--paper-line);}
+  .tier .roman{
+    font-family:'Fraunces', serif; font-size:1.4rem; color:var(--gold-leaf); font-weight:500;
+  }
+  .tier .name{font-family:'Fraunces', serif; font-size:1.15rem; font-weight:600;}
+  .tier .badge{
+    font-size:0.72rem; color:var(--verdigris-deep); border:1px solid var(--verdigris);
+    padding:2px 8px; margin-left:10px; display:inline-block; vertical-align:middle;
+  }
+  .tier .desc{font-size:0.9rem; color:var(--ink-soft); margin-top:6px; max-width:40ch;}
+  .tier .price{font-family:'Fraunces', serif; font-size:1.3rem; text-align:right; white-space:nowrap;}
+  .tier .buy{
+    margin-top:10px; padding:9px 16px; font-size:0.85rem;
+    background:transparent; border:1px solid var(--verdigris-deep); color:var(--verdigris-deep);
+    cursor:pointer; font-family:'Work Sans', sans-serif; white-space:nowrap;
+  }
+  .tier .buy:hover{background:var(--verdigris-deep); color:var(--white);}
+  .tier .buy:disabled{border-color:#B7AE99; color:#B7AE99; cursor:not-allowed;}
+  .tier.deep .name{color:var(--verdigris-deep);}
+
+  @media (max-width:520px){
+    .tier{grid-template-columns:32px 1fr; }
+    .tier .price-col{grid-column:1 / -1; display:flex; justify-content:space-between; align-items:center; margin-top:10px;}
+  }
+
+  .sample-toggle{
+    text-align:center; margin-top:26px; font-size:0.88rem;
+  }
+  .sample-toggle button{
+    background:none; border:none; color:var(--verdigris-deep); text-decoration:underline;
+    cursor:pointer; font-family:'Work Sans', sans-serif; font-size:0.88rem; padding:0;
+  }
+  .sample-excerpt{
+    display:none; margin-top:16px; padding:20px; background:var(--white);
+    border:1px solid var(--paper-line); font-size:0.9rem; color:var(--ink-soft); text-align:left;
+  }
+  .sample-excerpt p{margin:0 0 10px;}
+  .sample-excerpt strong{color:var(--ink);}
+
+  footer{
+    margin-top:64px; padding:28px 0 60px; border-top:1px solid var(--paper-line);
+    font-size:0.8rem; color:var(--ink-soft); text-align:center;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+
+  .reveal-anim{animation:stampIn 0.4s ease-out;}
+  @keyframes stampIn{
+    from{opacity:0; transform:translateY(6px) scale(0.98);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <span class="mark">Life Path</span>
+    <span class="tag">A personal numerology ledger</span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>Free Life Path Number Test — see the pattern behind your birth date</h1>
+    <p class="lede">Every date reduces to a single number. That number has been read as a map of temperament for centuries. Enter your birth date and see yours free, instantly.</p>
+    <div class="meta-line">
+      <span>1 birth date</span>
+      <span>10 seconds</span>
+      <span>Free result, always</span>
+    </div>
+
+    <form class="ledger" id="quizForm" novalidate>
+      <div class="field">
+        <label for="fullName">Full birth name (optional — unlocks your Expression Number)</label>
+        <input type="text" id="fullName" name="fullName" autocomplete="name" placeholder="e.g. Jordan Alexis Rivera">
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="birthDate">Birth date</label>
+          <input type="date" id="birthDate" name="birthDate" required>
+        </div>
+      </div>
+      <div class="hint">Nothing you enter here is stored or sent anywhere until you choose to unlock a report.</div>
+      <p class="error-msg" id="errorMsg" role="alert">Enter a valid birth date to continue.</p>
+      <button type="submit" class="btn-primary" id="submitBtn">Reveal my Life Path Number</button>
+    </form>
+  </section>
+
+  <section class="result reveal-anim" id="resultSection" aria-live="polite">
+    <div class="eyebrow">Your Life Path Number</div>
+    <div class="numeral" id="lifePathNumeral">—</div>
+    <div class="archetype-name" id="archetypeName"></div>
+    <p class="free-blurb" id="freeBlurb"></p>
+    <div class="second-number" id="expressionLine" style="display:none;"></div>
+  </section>
+
+  <div class="teaser" id="teaserBox" style="display:none;">
+    <strong>Your full Archetype profile is locked</strong>
+    How your Life Path Number and Expression Number interact, what tends to challenge you, and which of the twelve Numerical Archetypes you most resemble — unlocked below.
+  </div>
+
+  <section class="tiers" id="tiersSection" style="display:none;">
+    <h2>Choose your report</h2>
+    <p class="sub">One-time payment. No subscription. Delivered to the email you use at checkout.</p>
+
+    <div class="tier">
+      <div class="roman">I</div>
+      <div>
+        <div class="name">Score Report</div>
+        <div class="desc">Your Life Path and Expression Numbers in full, with the meaning of each individual digit.</div>
+      </div>
+      <div class="price-col">
+        <div class="price">$1.99</div>
+        <button class="buy" data-tier="score">Unlock</button>
+      </div>
+    </div>
+
+    <div class="tier deep">
+      <div class="roman">II</div>
+      <div>
+        <div class="name">Deep Report <span class="badge">Most popular</span></div>
+        <div class="desc">Everything in Score, plus a written reading of your Numerical Archetype and how your numbers interact.</div>
+      </div>
+      <div class="price-col">
+        <div class="price">$3.99</div>
+        <button class="buy" data-tier="deep">Unlock</button>
+      </div>
+    </div>
+
+    <div class="tier">
+      <div class="roman">III</div>
+      <div>
+        <div class="name">Complete Report</div>
+        <div class="desc">Everything in Deep, plus a printable Certificate of Reading with your verification ID.</div>
+      </div>
+      <div class="price-col">
+        <div class="price">$6.99</div>
+        <button class="buy" data-tier="complete">Unlock</button>
+      </div>
+    </div>
+
+    <div class="sample-toggle">
+      <button type="button" id="sampleToggleBtn">See a sample Deep Report excerpt</button>
+    </div>
+    <div class="sample-excerpt" id="sampleExcerpt">
+      <p><strong>Overall Summary</strong><br>Your numbers point to someone who builds trust slowly and completely — once given, it rarely needs re-earning. You tend to weigh a decision fully before acting, then act without second-guessing.</p>
+      <p><strong>How Your Numbers Interact</strong><br>Your Life Path favors structure; your Expression favors connection. Most of your friction shows up when one is asked to move faster than the other is ready for.</p>
+      <p><strong>Your Numerical Archetype</strong><br>You lean closest to <em>The Steward</em> — not because you avoid change, but because you insist on carrying people through it carefully.</p>
+      <p style="margin-top:14px; font-size:0.8rem;">↑ Illustrative excerpt. Your actual report is generated from your specific numbers.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  This is a self-insight tool for reflection and entertainment, not a professional or clinical reading.<br>
+  © 2026 life-path.icu · Built on the APEX quiz-funnel pattern
+</footer>
+
+<script>
+"use strict";
+
+/* =========================================================================
+   CONFIGURATION — fill in before this page goes live.
+   Create three Stripe Payment Links (one-time payment, one per tier).
+   In each Payment Link's settings, add two custom text fields:
+     "Full birth name" and "Birth date" — this is how you'll receive the
+     inputs needed to fulfil the report by hand during the test window,
+     since no report-generation backend is wired up yet (see notes.md).
+   ========================================================================= */
+const CONFIG = {
+  paymentLinks: {
+    score: "https://buy.stripe.com/dRm4gyafd9zu8Ztg3o9AA03",
+    deep: "https://buy.stripe.com/6oU5kC7317rmejNaJ49AA04",
+    complete: "https://buy.stripe.com/00w14m3QPaDy4Jd8AW9AA05"
+  }
+};
+
+/* ---------- numerology: pure functions, no external calls ---------- */
+
+const MASTER_NUMBERS = new Set([11, 22, 33]);
+
+function digitSum(n) {
+  return String(Math.abs(n))
+    .split("")
+    .reduce((sum, ch) => sum + Number(ch), 0);
+}
+
+function reduceNumber(n) {
+  let value = n;
+  while (value > 9 && !MASTER_NUMBERS.has(value)) {
+    value = digitSum(value);
+  }
+  return value;
+}
+
+function calculateLifePathNumber(isoDate) {
+  const [yearStr, monthStr, dayStr] = isoDate.split("-");
+  const year = Number(yearStr);
+  const month = Number(monthStr);
+  const day = Number(dayStr);
+
+  const reducedMonth = reduceNumber(month);
+  const reducedDay = reduceNumber(day);
+  const reducedYear = reduceNumber(digitSum(year));
+
+  return reduceNumber(reducedMonth + reducedDay + reducedYear);
+}
+
+const LETTER_VALUES = {
+  a: 1, j: 1, s: 1,
+  b: 2, k: 2, t: 2,
+  c: 3, l: 3, u: 3,
+  d: 4, m: 4, v: 4,
+  e: 5, n: 5, w: 5,
+  f: 6, o: 6, x: 6,
+  g: 7, p: 7, y: 7,
+  h: 8, q: 8, z: 8,
+  i: 9, r: 9
+};
+
+function calculateExpressionNumber(fullName) {
+  const letters = fullName.toLowerCase().replace(/[^a-z]/g, "").split("");
+  if (letters.length === 0) return null;
+  const total = letters.reduce((sum, ch) => sum + (LETTER_VALUES[ch] || 0), 0);
+  return reduceNumber(total);
+}
+
+/* ---------- content ---------- */
+
+const ARCHETYPES = {
+  1: { name: "The Pioneer", blurb: "You default to starting things rather than waiting for permission. Independence isn't a preference for you — it's closer to a requirement." },
+  2: { name: "The Diplomat", blurb: "You read a room before you read the agenda. Harmony matters to you more than being the one who's right." },
+  3: { name: "The Storyteller", blurb: "You process the world by describing it — out loud, in writing, or in whatever form is closest at hand." },
+  4: { name: "The Builder", blurb: "You trust what's been tested. Structure isn't restrictive to you; it's the thing that makes anything else possible." },
+  5: { name: "The Wayfarer", blurb: "Routine wears on you faster than it wears on most people. You're pulled toward whatever hasn't been tried yet." },
+  6: { name: "The Steward", blurb: "You take responsibility for people even when no one asked you to. Care, for you, is a form of action." },
+  7: { name: "The Seeker", blurb: "You'd rather understand something fully than move on quickly. Surface answers rarely satisfy you." },
+  8: { name: "The Strategist", blurb: "You think in outcomes and leverage. Ambition, for you, is less about status and more about closing the gap between plan and result." },
+  9: { name: "The Humanitarian", blurb: "You measure your choices against their effect on people beyond yourself. Idealism, for you, is a working method, not a mood." },
+  11: { name: "The Illuminator", blurb: "You sense things before you can explain them. A master number — your intuition tends to run ahead of your reasoning, not behind it." },
+  22: { name: "The Master Builder", blurb: "You think at the scale of systems, not tasks. A master number — you're wired to turn a large, vague idea into something standing and real." },
+  33: { name: "The Healer", blurb: "You carry other people's weight more easily than your own. A master number — your instinct to teach and to tend runs deeper than most." }
+};
+
+/* ---------- instrumentation hooks ----------
+   No analytics vendor is wired in. These are plain DOM CustomEvents so you
+   can attach GA4 / Plausible / PostHog / whatever you're already running
+   without me guessing at a vendor integration I can't verify from here. */
+function track(eventName, detail) {
+  console.log("lifepath:" + eventName, detail || {});
+  window.dispatchEvent(new CustomEvent("lifepath:" + eventName, { detail: detail || {} }));
+}
+
+/* ---------- UI wiring ---------- */
+
+const form = document.getElementById("quizForm");
+const errorMsg = document.getElementById("errorMsg");
+const resultSection = document.getElementById("resultSection");
+const lifePathNumeral = document.getElementById("lifePathNumeral");
+const archetypeName = document.getElementById("archetypeName");
+const freeBlurb = document.getElementById("freeBlurb");
+const expressionLine = document.getElementById("expressionLine");
+const teaserBox = document.getElementById("teaserBox");
+const tiersSection = document.getElementById("tiersSection");
+
+track("quiz_viewed");
+
+form.addEventListener("submit", function (event) {
+  event.preventDefault();
+  const dateValue = document.getElementById("birthDate").value;
+  const nameValue = document.getElementById("fullName").value.trim();
+
+  if (!dateValue) {
+    errorMsg.style.display = "block";
+    return;
+  }
+  errorMsg.style.display = "none";
+
+  const lifePath = calculateLifePathNumber(dateValue);
+  const archetype = ARCHETYPES[lifePath];
+
+  lifePathNumeral.textContent = lifePath;
+  archetypeName.textContent = archetype.name;
+  freeBlurb.textContent = archetype.blurb;
+
+  if (nameValue) {
+    const expression = calculateExpressionNumber(nameValue);
+    if (expression !== null) {
+      expressionLine.style.display = "block";
+      expressionLine.innerHTML = "Your Expression Number is <strong>" + expression + "</strong> — unlocked below, in the full report.";
+    }
+  } else {
+    expressionLine.style.display = "none";
+  }
+
+  resultSection.style.display = "block";
+  teaserBox.style.display = "block";
+  tiersSection.style.display = "block";
+  resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  track("free_result_shown", { lifePath: lifePath });
+});
+
+document.querySelectorAll(".buy").forEach(function (button) {
+  button.addEventListener("click", function () {
+    const tier = button.getAttribute("data-tier");
+    const link = CONFIG.paymentLinks[tier];
+    track("tier_button_clicked", { tier: tier });
+
+    if (!link) {
+      // Honest failure state — never a silent no-op, never a fake redirect.
+      alert("This tier isn't connected to a payment link yet. Add the Stripe Payment Link URL in CONFIG.paymentLinks before launch.");
+      return;
+    }
+    window.location.href = link;
+  });
+});
+
+const sampleToggleBtn = document.getElementById("sampleToggleBtn");
+const sampleExcerpt = document.getElementById("sampleExcerpt");
+sampleToggleBtn.addEventListener("click", function () {
+  const isOpen = sampleExcerpt.style.display === "block";
+  sampleExcerpt.style.display = isOpen ? "none" : "block";
+  sampleToggleBtn.textContent = isOpen ? "See a sample Deep Report excerpt" : "Hide sample excerpt";
+});
+</script>
+</body>
+</html>

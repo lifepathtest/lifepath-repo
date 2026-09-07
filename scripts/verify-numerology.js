@@ -21,6 +21,7 @@ const sandbox = {
     location: {}
   },
   document: {
+    addEventListener: () => {},
     getElementById: () => ({ addEventListener: () => {}, style: {} }),
     querySelectorAll: () => []
   },
