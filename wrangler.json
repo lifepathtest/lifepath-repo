@@ -6,5 +6,9 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS"
-  }
+  },
+  "routes": [
+    { "pattern": "life-path.icu", "custom_domain": true },
+    { "pattern": "www.life-path.icu", "custom_domain": true }
+  ]
 }

@@ -164,7 +164,7 @@ async function run() {
   }
 
   console.log("\nLive links successfully wired into all web files!");
-  console.log("Next: run 'git commit' and 'wrangler pages deploy public' to publish live links.");
+  console.log("Next: run 'git commit' and 'npx wrangler deploy' to publish live links.");
 }
 
 // Opt-in: node scripts/setup-live-stripe.js --update-existing

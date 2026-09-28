@@ -109,3 +109,16 @@ test('WI-4: CORS preflight and non-POST behaviour are unchanged', async () => {
   const get = await worker.fetch(new Request('https://life-path.icu/api/track'), env, {});
   assert.strictEqual(get.status, 405);
 });
+
+test('WI-1c: wrangler.json binds apex + www as Worker custom domains; docs name one deploy command', () => {
+  const { read } = require('./helpers');
+  const config = JSON.parse(read('wrangler.json'));
+  assert.deepStrictEqual(config.routes, [
+    { pattern: 'life-path.icu', custom_domain: true },
+    { pattern: 'www.life-path.icu', custom_domain: true }
+  ]);
+  assert.strictEqual(config.main, 'src/index.js');
+  const docs = read('STRIPE-LIVE-MIGRATION.md') + read('scripts/setup-live-stripe.js');
+  assert.ok(!docs.includes('wrangler pages deploy'));
+  assert.ok(docs.includes('npx wrangler deploy'));
+});
