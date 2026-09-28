@@ -30,3 +30,11 @@ Compare, over the same window, against iq-test.icu:
 - Paid-conversion rate (Stripe completed payments ÷ tier-button clicks)
 
 If paid-conversion clears iq-test.icu's own rate, the category hypothesis holds and building real report generation is justified. If it doesn't, the bottleneck is traffic/positioning, not category — the original diagnostic question is still open either way.
+
+## Fulfilment: matching a Stripe purchase to the buyer's inputs
+- Checkouts started from the page carry `client_reference_id` = `lp<LifePath>_<YYYYMMDD>` (e.g. `lp11_19900512`), built by `buildCheckoutUrl()` from the free result the buyer just saw. Stripe attaches it to the payment's Checkout Session (and the `checkout.session.completed` event). Use it as the buyer's birth date when the now-optional **Birth date** field is blank.
+- It is absent if the buyer clicked a tier before calculating, or if Stripe drops an invalid value. Then use the **Birth date** field, or email the buyer.
+- Deliver to the checkout email within the window stated on the page and in `/terms.html` (24 hours, OWNER CONFIRM). Refund requests within 14 days: Stripe Dashboard → Payments → Refund.
+- One-time owner step after merge (adds the post-payment message and makes Birth date optional on the existing links; idempotent, creates nothing):
+  `STRIPE_LIVE_KEY=rk_live_... STRIPE_PAYMENT_LINK_IDS=plink_...,plink_...,plink_... node scripts/setup-live-stripe.js --update-existing`
+- Where the Dashboard displays `client_reference_id` on a payment has not been verified from this repo — confirm it during the first live test purchase.

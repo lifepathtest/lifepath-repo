@@ -2004,6 +2004,16 @@ function track(eventName, detail) {
   } catch (err) {}
 }
 
+/* ---------- checkout reference (Stripe Payment Link client_reference_id) ---------- */
+
+// Appends a reconciliation ref such as "lp11_19900512" (Life Path + birth date) so the
+// buyer need not retype their birth date at checkout. Missing or malformed state -> bare link.
+function buildCheckoutUrl(link, state) {
+  var ref = state && typeof state.date === "string" ? "lp" + state.lifePath + "_" + state.date.replace(/-/g, "") : "";
+  if (!/^lp\d{1,2}_\d{8}$/.test(ref)) return link;
+  return link + (link.indexOf("?") === -1 ? "?" : "&") + "client_reference_id=" + encodeURIComponent(ref);
+}
+
 /* ---------- UI wiring ---------- */
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -2089,6 +2099,7 @@ document.addEventListener("DOMContentLoaded", function () {
     tiersSection.style.display = "block";
     resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
 
+    window.__lp = { lifePath: lifePath, date: dateVal, hasName: !!nameVal };
     track("free_result_shown", { lifePath: lifePath, hasName: !!nameVal });
   });
 
@@ -2101,8 +2112,9 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Payment link is not configured.");
         return;
       }
+      var dest = buildCheckoutUrl(link, window.__lp);
       track("checkout_redirect", { tier: tier });
-      window.location.href = link;
+      window.location.href = dest;
     });
   });
 
