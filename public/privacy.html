@@ -18,7 +18,7 @@
   "name": "Privacy Policy",
   "url": "https://life-path.icu/privacy.html",
   "datePublished": "2026-09-14",
-  "dateModified": "2026-09-14",
+  "dateModified": "2026-09-28",
   "isPartOf": { "@id": "https://life-path.icu/#website" },
   "breadcrumb": {
     "@type": "BreadcrumbList",
@@ -148,44 +148,48 @@
   <a href="/" class="back-link">← Back to Life Path Calculator</a>
 
   <h1>Privacy Policy</h1>
-  <p class="last-updated">Last updated: September 14, 2026</p>
+  <p class="last-updated">Last updated: September 28, 2026</p>
 
   <p>Life Path (<strong>life-path.icu</strong>) is operated by APEX Business Systems Ltd., Edmonton, AB, Canada. This policy explains what data we collect, how we use it, and your rights.</p>
 
   <h2>1. What We Collect</h2>
 
   <h3>Calculator Usage (No Account Required)</h3>
-  <p>When you use the free Life Path calculator, your birth date and name are processed <strong>entirely in your browser</strong>. No personal data is sent to our servers for the free calculation. Your birth date and name never leave your device unless you choose to purchase a report.</p>
+  <p>When you use the free Life Path calculator, your birth date and name are processed <strong>entirely in your browser</strong>. No personal data is sent to our servers for the free calculation, and your birth date and name are never included in our usage analytics. If you click a purchase button, your birth date is passed to Stripe as described in section 2.</p>
 
-  <h3>Anonymized Analytics Events</h3>
-  <p>We collect anonymized usage events (e.g., "calculator used," "page viewed") to measure site performance. These events contain:</p>
+  <h3>Usage Analytics Events</h3>
+  <p>We record a small set of usage events (e.g., "page viewed," "result shown," "checkout button clicked") to measure how the site performs. Each event stores only:</p>
   <ul>
-    <li>Event name (e.g., <code>quiz_viewed</code>, <code>free_result_shown</code>)</li>
+    <li>Event name (e.g., <code>quiz_viewed</code>, <code>free_result_shown</code>, <code>checkout_redirect</code>)</li>
     <li>Timestamp</li>
-    <li>Your calculated Life Path number (no name or birth date)</li>
+    <li>A random per-visit identifier generated in your browser (not linked to your identity)</li>
+    <li>Your country, as reported by Cloudflare</li>
+    <li>Whether the visit looked automated (bot) or human — your browser's user-agent is checked for this but not stored</li>
+    <li>Where relevant: the pricing tier you clicked, your calculated Life Path number, and whether you entered a name (yes/no only)</li>
   </ul>
-  <p>These events are stored in a Supabase database and do not contain personally identifiable information.</p>
+  <p>These events are stored in a Supabase database. They do <strong>not</strong> include your IP address, name, birth date, or email.</p>
 
   <h3>Cloudflare Web Analytics</h3>
   <p>Our hosting provider, Cloudflare, collects aggregated, privacy-first analytics (page views, country, referrer). Cloudflare Web Analytics does not use cookies and does not track individual users. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare's Privacy Policy</a>.</p>
 
   <h2>2. Payments (Stripe)</h2>
   <p>If you purchase a report, payment is processed by <strong>Stripe, Inc.</strong> We do not see or store your credit card number. Stripe collects your email address and payment details under their own privacy policy. See <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">Stripe's Privacy Policy</a>.</p>
-  <p>After purchase, we receive a confirmation from Stripe containing your email and the tier purchased, which we use solely to fulfill your report.</p>
+  <p>When you click a purchase button, your calculated Life Path number and birth date are added to the Stripe checkout link as a reference (for example, <code>lp11_19900512</code>) so you don't have to retype your birth date. Your name is not included.</p>
+  <p>After purchase, we receive a confirmation from Stripe containing your email, the tier purchased, that checkout reference, and any details you enter at checkout (such as your full birth name). We use these solely to fulfill your report.</p>
 
   <h2>3. Cookies</h2>
-  <p>Life Path does not set any first-party cookies. No tracking cookies, no session cookies, no advertising cookies. Cloudflare may set a minimal security cookie (<code>__cf_bm</code>) for bot detection purposes.</p>
+  <p>Life Path does not set any first-party cookies. No tracking cookies, no session cookies, no advertising cookies. Cloudflare may set a minimal security cookie (<code>__cf_bm</code>) for bot detection purposes. The random per-visit identifier described above is kept in your browser's session storage (not a cookie) and is removed when you close the tab.</p>
 
   <h2>4. Data Sharing</h2>
   <p>We do not sell, rent, or share your data with third parties, except:</p>
   <ul>
     <li><strong>Stripe</strong> — for payment processing (as described above)</li>
     <li><strong>Cloudflare</strong> — for hosting, CDN, and security</li>
-    <li><strong>Supabase</strong> — for anonymized event storage</li>
+    <li><strong>Supabase</strong> — for usage event storage (no IP address, name, birth date, or email)</li>
   </ul>
 
   <h2>5. Data Retention</h2>
-  <p>Anonymized analytics events are retained for up to 12 months, then automatically deleted. Stripe transaction records are retained as required by applicable financial regulations.</p>
+  <p>Usage analytics events are retained for up to 12 months. Stripe transaction records are retained as required by applicable financial regulations.</p>
 
   <h2>6. Your Rights</h2>
   <p>You may request deletion of any data associated with your email address by contacting us. Since our calculator is anonymous and requires no account, there is typically no personal data to delete from the calculator itself.</p>

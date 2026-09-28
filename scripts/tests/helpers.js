@@ -18,7 +18,7 @@ async function loadWorker() {
 
 // Runs the page's main inline <script> in a sandbox (same approach as verify-numerology.js)
 // and returns the sandbox so pure functions can be called directly.
-function loadPageScript(rel = 'public/index.html') {
+function loadPageScript(rel = 'public/index.html', extraGlobals = {}) {
   const match = read(rel).match(/<script>([\s\S]*?)<\/script>/);
   if (!match) throw new Error('No plain <script> block found in ' + rel);
   const sandbox = {
@@ -28,7 +28,8 @@ function loadPageScript(rel = 'public/index.html') {
       getElementById: () => ({ addEventListener: () => {}, style: {} }),
       querySelectorAll: () => []
     },
-    CustomEvent: class {}
+    CustomEvent: class {},
+    ...extraGlobals
   };
   vm.createContext(sandbox);
   vm.runInContext(match[1], sandbox);

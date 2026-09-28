@@ -1,3 +1,24 @@
+const TRACK_EVENTS = new Set([
+  'quiz_viewed', 'date_entered', 'free_result_shown', 'sample_opened',
+  'tier_button_clicked', 'checkout_redirect', 'healthcheck'
+]);
+const META_KEYS = ['sid', 'tier', 'lifePath', 'hasName', 'ref'];
+const META_STRING_MAX = 64;
+const MAX_BODY_BYTES = 4096;
+const BOT_UA = /bot|crawl|spider|slurp|headless|curl|wget|python|httpclient|monitor/i;
+
+// Keeps only allowlisted scalar meta keys; strings are capped. Never passes PII fields through.
+function sanitizeMeta(raw) {
+  const meta = {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return meta;
+  for (const key of META_KEYS) {
+    const val = raw[key];
+    if (typeof val === 'string') meta[key] = val.slice(0, META_STRING_MAX);
+    else if (typeof val === 'boolean' || (typeof val === 'number' && Number.isFinite(val))) meta[key] = val;
+  }
+  return meta;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -34,60 +55,66 @@ export default {
       }
 
       if (request.method === 'POST') {
+        const jsonHeaders = { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
+        const tooLarge = () => new Response(JSON.stringify({ ok: false, error: 'payload too large' }), { status: 413, headers: jsonHeaders });
+
+        if (Number(request.headers.get('content-length')) > MAX_BODY_BYTES) {
+          return tooLarge();
+        }
+
         try {
-          const body = await request.json().catch(() => ({}));
-          const eventName = typeof body.event_name === 'string' ? body.event_name.trim() : null;
+          const raw = await request.text();
+          if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
+            return tooLarge();
+          }
 
-          if (eventName) {
-            const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || null;
-            const userAgent = request.headers.get('user-agent') || null;
-            const supabaseUrl = env.SUPABASE_URL || 'https://buaxjmahjinuowoidhmn.supabase.co';
-            const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
+          let body = null;
+          try { body = JSON.parse(raw); } catch (e) { body = null; }
+          const eventName = body && typeof body.event_name === 'string' ? body.event_name.trim() : '';
 
-            if (supabaseKey) {
-              const insertPromise = fetch(`${supabaseUrl}/rest/v1/lifepath_events`, {
-                method: 'POST',
-                headers: {
-                  'apikey': supabaseKey,
-                  'Authorization': `Bearer ${supabaseKey}`,
-                  'Content-Type': 'application/json',
-                  'Prefer': 'return=minimal'
-                },
-                body: JSON.stringify({
-                  event_name: eventName,
-                  meta: body.meta || {},
-                  ip: ip,
-                  user_agent: userAgent
-                })
-              }).catch(err => {
-                console.error('Supabase telemetry write error:', err);
-              });
+          // Unknown or missing events are acknowledged but never written
+          if (!TRACK_EVENTS.has(eventName)) {
+            return new Response(null, { status: 204, headers: { ...corsHeaders, 'Cache-Control': 'no-store' } });
+          }
 
-              if (ctx && typeof ctx.waitUntil === 'function') {
-                ctx.waitUntil(insertPromise);
-              } else {
-                await insertPromise;
-              }
+          const userAgent = request.headers.get('user-agent') || '';
+          const meta = sanitizeMeta(body.meta);
+          meta.country = (request.cf && request.cf.country) || null;
+          meta.ua_class = !userAgent || BOT_UA.test(userAgent) ? 'bot' : 'human';
+
+          const supabaseUrl = env.SUPABASE_URL || 'https://buaxjmahjinuowoidhmn.supabase.co';
+          const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY;
+
+          if (supabaseKey) {
+            const insertPromise = fetch(`${supabaseUrl}/rest/v1/lifepath_events`, {
+              method: 'POST',
+              headers: {
+                'apikey': supabaseKey,
+                'Authorization': `Bearer ${supabaseKey}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+              },
+              // No raw IP or user-agent is stored (privacy policy §1)
+              body: JSON.stringify({
+                event_name: eventName,
+                meta: meta,
+                ip: null,
+                user_agent: null
+              })
+            }).catch(err => {
+              console.error('Supabase telemetry write error:', err);
+            });
+
+            if (ctx && typeof ctx.waitUntil === 'function') {
+              ctx.waitUntil(insertPromise);
+            } else {
+              await insertPromise;
             }
           }
 
-          return new Response(JSON.stringify({ ok: true }), {
-            status: 200,
-            headers: {
-              ...corsHeaders,
-              'Content-Type': 'application/json',
-              'Cache-Control': 'no-store'
-            }
-          });
+          return new Response(JSON.stringify({ ok: true }), { status: 200, headers: jsonHeaders });
         } catch (err) {
-          return new Response(JSON.stringify({ ok: false, error: err.message }), {
-            status: 400,
-            headers: {
-              ...corsHeaders,
-              'Content-Type': 'application/json',
-              'Cache-Control': 'no-store'
-            }
-          });
+          return new Response(JSON.stringify({ ok: false, error: err.message }), { status: 400, headers: jsonHeaders });
         }
       }
 

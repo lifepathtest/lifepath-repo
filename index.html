@@ -1959,13 +1959,37 @@ var ARCHETYPES = {
 
 /* ---------- telemetry instrumentation ---------- */
 
+var lpSid = null;
+
+// Random per-tab visit id (16 hex chars). Kept in sessionStorage when available,
+// regenerated per page load when it is not. Never derived from user input.
+function getSid() {
+  if (lpSid) return lpSid;
+  try { lpSid = sessionStorage.getItem("lp_sid"); } catch (err) {}
+  if (!lpSid || !/^[0-9a-f]{16}$/.test(lpSid)) {
+    var bytes = new Uint8Array(8);
+    try {
+      crypto.getRandomValues(bytes);
+    } catch (err) {
+      for (var i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+    }
+    lpSid = Array.prototype.map.call(bytes, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+    try { sessionStorage.setItem("lp_sid", lpSid); } catch (err) {}
+  }
+  return lpSid;
+}
+
 function track(eventName, detail) {
   console.log("lifepath:" + eventName, detail || {});
   window.dispatchEvent(new CustomEvent("lifepath:" + eventName, { detail: detail || {} }));
   try {
+    var meta = { sid: getSid() };
+    if (detail) {
+      Object.keys(detail).forEach(function (key) { meta[key] = detail[key]; });
+    }
     var payload = JSON.stringify({
       event_name: eventName,
-      meta: detail || {}
+      meta: meta
     });
     if (navigator.sendBeacon) {
       navigator.sendBeacon("/track", new Blob([payload], { type: "application/json" }));
@@ -1997,6 +2021,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var sampleContent = document.getElementById("sampleContent");
   var birthDateInput = document.getElementById("birthDate");
   var reductionPreview = document.getElementById("reductionPreview");
+  var dateEnteredTracked = false;
+  var sampleOpenedTracked = false;
 
   track("quiz_viewed");
 
@@ -2007,6 +2033,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (val && val.includes("-")) {
         var p = val.split("-");
         if (p.length === 3 && p[0].length === 4) {
+          if (!dateEnteredTracked) {
+            dateEnteredTracked = true;
+            track("date_entered");
+          }
           try {
             var lp = calculateLifePathNumber(val);
             reductionPreview.style.display = "block";
@@ -2059,7 +2089,7 @@ document.addEventListener("DOMContentLoaded", function () {
     tiersSection.style.display = "block";
     resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    track("free_result_shown", { lifePath: lifePath });
+    track("free_result_shown", { lifePath: lifePath, hasName: !!nameVal });
   });
 
   document.querySelectorAll(".buy").forEach(function (btn) {
@@ -2071,6 +2101,7 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Payment link is not configured.");
         return;
       }
+      track("checkout_redirect", { tier: tier });
       window.location.href = link;
     });
   });
@@ -2084,6 +2115,10 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         sampleContent.classList.add("visible");
         sampleToggleBtn.innerHTML = "<span>✕</span> Hide sample excerpt";
+        if (!sampleOpenedTracked) {
+          sampleOpenedTracked = true;
+          track("sample_opened");
+        }
       }
     });
   }
