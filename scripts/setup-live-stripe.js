@@ -9,6 +9,10 @@ if (!STRIPE_KEY || !STRIPE_KEY.startsWith('rk_live_') && !STRIPE_KEY.startsWith(
   process.exit(1);
 }
 
+// Post-payment copy and fulfilment window (OWNER CONFIRM: keep in sync with the page trust bar and /terms.html).
+const DELIVERY_SLA = '24 hours';
+const CONFIRMATION_MESSAGE = `Thank you! Your reading is hand-prepared and emailed to this address within ${DELIVERY_SLA}. Questions: support@life-path.icu`;
+
 function stripeRequest(method, endpoint, data = null) {
   return new Promise((resolve, reject) => {
     let postData = '';
@@ -160,10 +164,51 @@ async function run() {
   }
 
   console.log("\nLive links successfully wired into all web files!");
-  console.log("Next: run 'git commit' and 'wrangler pages deploy public' to publish live links.");
+  console.log("Next: run 'git commit' and 'npx wrangler deploy' to publish live links.");
 }
 
-run().catch(err => {
+// Opt-in: node scripts/setup-live-stripe.js --update-existing
+// Updates the existing links listed in STRIPE_PAYMENT_LINK_IDS (comma-separated plink_ IDs) in place:
+// adds the post-payment delivery message and makes birth_date optional (the page now passes the birth
+// date as client_reference_id). Idempotent; creates no products, prices or links and edits no files.
+async function updateExisting() {
+  const ids = (process.env.STRIPE_PAYMENT_LINK_IDS || '').split(',').map((id) => id.trim()).filter(Boolean);
+  if (ids.length === 0 || ids.some((id) => !/^plink_[A-Za-z0-9]+$/.test(id))) {
+    console.error("FATAL: --update-existing requires STRIPE_PAYMENT_LINK_IDS set to comma-separated Payment Link IDs (plink_...).");
+    process.exit(1);
+  }
+
+  for (const id of ids) {
+    console.log(`Updating Live Payment Link ${id}...`);
+    const link = await stripeRequest('POST', `/v1/payment_links/${id}`, {
+      after_completion: {
+        type: 'hosted_confirmation',
+        hosted_confirmation: { custom_message: CONFIRMATION_MESSAGE }
+      },
+      // Each custom_fields entry needs key, label and type on update, so both fields are re-sent in full.
+      custom_fields: [
+        {
+          key: 'full_birth_name',
+          type: 'text',
+          label: { type: 'custom', custom: 'Full birth name' },
+          optional: false
+        },
+        {
+          key: 'birth_date',
+          type: 'text',
+          label: { type: 'custom', custom: 'Birth date' },
+          optional: true
+        }
+      ]
+    });
+    const birthDate = (link.custom_fields || []).find((field) => field.key === 'birth_date');
+    console.log(`Updated ${link.id}: after_completion=${link.after_completion && link.after_completion.type}, birth_date optional=${birthDate ? birthDate.optional : 'n/a'}`);
+  }
+
+  console.log("\nExisting Payment Links updated. Verify the confirmation message and optional Birth date field in the Stripe Dashboard.");
+}
+
+(process.argv.includes('--update-existing') ? updateExisting : run)().catch(err => {
   console.error("FATAL ERROR:", JSON.stringify(err, null, 2));
   process.exit(1);
 });

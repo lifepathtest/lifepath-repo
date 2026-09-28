@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script id="canonical-host-guard">(function(){var h=location.hostname;if(h==="www.life-path.icu"||h==="lifepath-repo.pages.dev"){location.replace("https://life-path.icu"+location.pathname+location.search+location.hash);}})();</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Free Life Path Number Calculator — Accurate Pythagorean Numerology | Life Path</title>
 <meta name="description" content="Calculate your Life Path number instantly with our free Pythagorean calculator. Discover your core archetype, master numbers 11, 22, 33, and life purpose.">
@@ -1522,7 +1523,7 @@
             <ul class="tier-features">
               <li>Full Life Path classification</li>
               <li>Core archetype one-liner</li>
-              <li>Hand-prepared fulfillment</li>
+              <li>Delivered to your checkout email</li>
             </ul>
           </div>
           <button type="button" class="btn-tier buy" data-tier="score">Get My Score — $1.99</button>
@@ -1563,8 +1564,8 @@
       </div>
 
       <div class="tiers-trust-bar">
-        <p class="tiers-guarantee">🔒 One-time payment · No subscription · 100% satisfaction guaranteed</p>
-        <p class="tiers-social-proof">Introductory pricing — join thousands discovering their archetype</p>
+        <p class="tiers-guarantee">🔒 One-time payment · No subscription · Hand-prepared and emailed within 24 hours · Not happy? Full refund within 14 days — see <a href="/terms.html">Terms</a></p>
+        <p class="tiers-social-proof">Introductory pricing</p>
       </div>
 
       <!-- Sample excerpt -->
@@ -1866,6 +1867,7 @@
   <p class="disclaimer">Numerology is offered here for reflection and entertainment. It isn't a substitute for professional, medical, financial, or legal advice.</p>
   <div class="footer-links">
     <a href="/privacy.html">Privacy Policy</a>
+    <a href="/terms.html">Terms &amp; Refunds</a>
     <a href="mailto:support@life-path.icu">Contact</a>
     <a href="/about.html">About APEX Business Systems Ltd.</a>
     <a href="https://life-path.icu/sitemap.xml">XML Sitemap</a>
@@ -1957,13 +1959,37 @@ var ARCHETYPES = {
 
 /* ---------- telemetry instrumentation ---------- */
 
+var lpSid = null;
+
+// Random per-tab visit id (16 hex chars). Kept in sessionStorage when available,
+// regenerated per page load when it is not. Never derived from user input.
+function getSid() {
+  if (lpSid) return lpSid;
+  try { lpSid = sessionStorage.getItem("lp_sid"); } catch (err) {}
+  if (!lpSid || !/^[0-9a-f]{16}$/.test(lpSid)) {
+    var bytes = new Uint8Array(8);
+    try {
+      crypto.getRandomValues(bytes);
+    } catch (err) {
+      for (var i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+    }
+    lpSid = Array.prototype.map.call(bytes, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+    try { sessionStorage.setItem("lp_sid", lpSid); } catch (err) {}
+  }
+  return lpSid;
+}
+
 function track(eventName, detail) {
   console.log("lifepath:" + eventName, detail || {});
   window.dispatchEvent(new CustomEvent("lifepath:" + eventName, { detail: detail || {} }));
   try {
+    var meta = { sid: getSid() };
+    if (detail) {
+      Object.keys(detail).forEach(function (key) { meta[key] = detail[key]; });
+    }
     var payload = JSON.stringify({
       event_name: eventName,
-      meta: detail || {}
+      meta: meta
     });
     if (navigator.sendBeacon) {
       navigator.sendBeacon("/track", new Blob([payload], { type: "application/json" }));
@@ -1976,6 +2002,16 @@ function track(eventName, detail) {
       }).catch(function () {});
     }
   } catch (err) {}
+}
+
+/* ---------- checkout reference (Stripe Payment Link client_reference_id) ---------- */
+
+// Appends a reconciliation ref such as "lp11_19900512" (Life Path + birth date) so the
+// buyer need not retype their birth date at checkout. Missing or malformed state -> bare link.
+function buildCheckoutUrl(link, state) {
+  var ref = state && typeof state.date === "string" ? "lp" + state.lifePath + "_" + state.date.replace(/-/g, "") : "";
+  if (!/^lp\d{1,2}_\d{8}$/.test(ref)) return link;
+  return link + (link.indexOf("?") === -1 ? "?" : "&") + "client_reference_id=" + encodeURIComponent(ref);
 }
 
 /* ---------- UI wiring ---------- */
@@ -1995,6 +2031,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var sampleContent = document.getElementById("sampleContent");
   var birthDateInput = document.getElementById("birthDate");
   var reductionPreview = document.getElementById("reductionPreview");
+  var dateEnteredTracked = false;
+  var sampleOpenedTracked = false;
 
   track("quiz_viewed");
 
@@ -2005,6 +2043,10 @@ document.addEventListener("DOMContentLoaded", function () {
       if (val && val.includes("-")) {
         var p = val.split("-");
         if (p.length === 3 && p[0].length === 4) {
+          if (!dateEnteredTracked) {
+            dateEnteredTracked = true;
+            track("date_entered");
+          }
           try {
             var lp = calculateLifePathNumber(val);
             reductionPreview.style.display = "block";
@@ -2057,7 +2099,8 @@ document.addEventListener("DOMContentLoaded", function () {
     tiersSection.style.display = "block";
     resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    track("free_result_shown", { lifePath: lifePath });
+    window.__lp = { lifePath: lifePath, date: dateVal, hasName: !!nameVal };
+    track("free_result_shown", { lifePath: lifePath, hasName: !!nameVal });
   });
 
   document.querySelectorAll(".buy").forEach(function (btn) {
@@ -2069,7 +2112,9 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Payment link is not configured.");
         return;
       }
-      window.location.href = link;
+      var dest = buildCheckoutUrl(link, window.__lp);
+      track("checkout_redirect", { tier: tier });
+      window.location.href = dest;
     });
   });
 
@@ -2082,6 +2127,10 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         sampleContent.classList.add("visible");
         sampleToggleBtn.innerHTML = "<span>✕</span> Hide sample excerpt";
+        if (!sampleOpenedTracked) {
+          sampleOpenedTracked = true;
+          track("sample_opened");
+        }
       }
     });
   }

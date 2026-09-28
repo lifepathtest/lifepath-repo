@@ -47,7 +47,8 @@ git add lifepath-test.html index.html public/
 git commit -m "feat(stripe): wire live Stripe payment links for production launch"
 git push origin main
 
-# 4. Deploy to Cloudflare
-npx wrangler pages deploy public --project-name lifepath-repo --branch main
+# 4. Deploy to Cloudflare (single path: the Worker serves life-path.icu + www and the /track endpoint)
 npx wrangler deploy
 ```
+
+> **One deploy target only.** `life-path.icu` and `www.life-path.icu` are bound to the **Worker** `lifepath-repo` as custom domains (`wrangler.json` → `routes`). Do not deploy the Pages project. If either host is still listed under the Pages project's *Custom domains*, remove it there first (execution contract §9-A), or `wrangler deploy` cannot attach the domain.

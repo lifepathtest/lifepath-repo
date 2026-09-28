@@ -101,3 +101,18 @@ Compare `life-path.icu` 14-day instrumented metrics (Days 8–21) against `iq-te
 
 2. **Stripe Restricted Business Category Safeguard:**  
    The site operates strictly under mathematical Pythagorean algorithmic classification with an explicit entertainment disclaimer on every page and footer (`id="privacy"`), mitigating classification as unregulated psychic divination.
+
+---
+
+## 6. Gate Outcome (recorded 2026-09-28)
+
+**Verdict: UNTESTED — Traffic Starvation (per §4.1).** No tier-click count ≥ 10 was supplied for the instrumented window, so the §4.2 matrix is not evaluated. This is neither GO nor NO-GO.
+
+**Evidence (owner Cloudflare exports, 30-day view):**
+- 3.79k visits, but 4xx responses (15.62k) exceed 2xx responses (9.71k); `/wp-admin/install.php` alone drew 2.44k requests from one IP — the bulk of traffic is scanner noise.
+- Web Analytics (bots excluded): ≤ ~50 LCP samples and 10 INP interactions in total (all on `#birthDate`) — human engagement is too low to clear the ≥ 10 tier-click denominator.
+- Paid sales: 0; net revenue: $0.00.
+
+**Topology probe (2026-09-28):** `POST /track` returned `200 {"ok":true}` with the Worker's CORS/`no-store` headers on both `life-path.icu` and `www.life-path.icu` — the Worker (not Pages) serves both hosts. Whether rows reach Supabase (i.e. `SUPABASE_SERVICE_ROLE_KEY` is set) is not verifiable from the repo.
+
+Code freeze lifted by `execution-contract-revenue-rescue.md`.
