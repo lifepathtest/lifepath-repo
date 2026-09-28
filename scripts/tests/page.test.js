@@ -18,3 +18,32 @@ test('WI-1: canonical-host guard appears exactly once, as the first <script> in 
     assert.ok(head.includes('h==="www.life-path.icu"||h==="lifepath-repo.pages.dev"'), copy);
   }
 });
+
+// Visible text + JSON-LD of every public page (CSS/JS and markup stripped so class names don't count).
+function claimText(html) {
+  const ld = (html.match(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g) || []).join(' ');
+  const visible = html
+    .replace(/<style[\s\S]*?<\/style>/g, ' ')
+    .replace(/<script[\s\S]*?<\/script>/g, ' ')
+    .replace(/<[^>]+>/g, ' ');
+  return visible + ' ' + ld;
+}
+
+test('WI-2: no fabricated social proof or unbacked guarantees on any public page', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const { ROOT } = require('./helpers');
+  const pages = fs.readdirSync(path.join(ROOT, 'public')).filter((f) => f.endsWith('.html'));
+  for (const page of pages) {
+    const hits = claimText(read('public/' + page)).match(/thousands|guarantee|join [0-9a-z]+ (people|users)/gi);
+    assert.strictEqual(hits, null, 'public/' + page + ': ' + (hits || []).join(', '));
+  }
+});
+
+test('WI-2: trust bar states delivery + refund terms and links to /terms.html', () => {
+  const html = read('public/index.html');
+  assert.ok(html.includes('Hand-prepared and emailed within 24 hours · Not happy? Full refund within 14 days — see <a href="/terms.html">Terms</a>'));
+  assert.ok(html.includes('<p class="tiers-social-proof">Introductory pricing</p>'));
+  assert.ok(!html.includes('Hand-prepared fulfillment'));
+  assert.ok(html.includes('<li>Delivered to your checkout email</li>'));
+});
