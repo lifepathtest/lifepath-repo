@@ -2,6 +2,12 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
+    // Canonical host: 301 www → apex, preserving path and query
+    if (url.hostname === 'www.life-path.icu') {
+      url.hostname = 'life-path.icu';
+      return Response.redirect(url.toString(), 301);
+    }
+
     // Block automated vulnerability scanner probing on sensitive dotfiles
     if (url.pathname.startsWith('/.env') || url.pathname.startsWith('/.git')) {
       return new Response('404 Not Found', {
